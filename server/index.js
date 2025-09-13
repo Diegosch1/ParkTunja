@@ -7,10 +7,12 @@ app.use(json());
 
 // Endpoint de prueba
 app.get('/api', (req, res) => {
-  res.json({ message: 'Servidor Node corriendo 🚀' });
+  res.json({ message: 'Node server running' });
+  res.json({ message: 'Node server running' });
+  res.json({ message: 'Node server running' });
 });
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
