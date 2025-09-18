@@ -1,11 +1,16 @@
 import express, { json } from "express";
 import cors from "cors";
 import authRouter from "./routes/auth.routers.js";
+import parkingRouter from "./routes/parking.routers.js";
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/api", authRouter);
+app.use(cookieParser());
+
+app.use("/auth", authRouter);
+app.use("/parking", parkingRouter);
 
 export default app;
