@@ -1,18 +1,13 @@
-import express, { json } from 'express';
-import cors from 'cors';
-const app = express();
-
-app.use(cors());
-app.use(json());
-
-// Endpoint de prueba
-app.get('/api', (req, res) => {
-  res.json({ message: 'Node server running' });
-  res.json({ message: 'Node server running' });
-  res.json({ message: 'Node server running' });
-});
+import app from "./app.js";
+import { connectDB } from "./db.js";
 
 const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+connectDB();
+
+app.listen(PORT, (error) => {
+  if (!error)
+    console.log(
+      "Server is Successfully Running, and App is listening on port " + PORT
+    );
+  else console.log("Error occurred, server can't start", error);
 });
