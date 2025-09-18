@@ -26,6 +26,7 @@
     color: var(--color-text-primary);
     font-weight: 400;
     transition: color 0.3s ease;
+    cursor: pointer;
 }
 
 .header-nav a:hover {

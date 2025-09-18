@@ -33,23 +33,102 @@
 }
 
 
-.section-services{
-    padding: 2rem 1rem;
+.section-services {
+    padding: 3rem 1rem;
     text-align: center;
     background-color: var(--color-secondary);
     gap: 1rem;
 }
 
-.section-services h2{
-    margin-bottom: 2rem;
+.section-services h2 {
+    margin-bottom: 3rem;
 }
 
-.section-services .services-content{
+.section-services .services-content {
     display: flex;
 }
 
-.service-info small{
+.services-content {
+    justify-content: center;
+    width: 100%;
+}
+
+.service-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.service-card img {
+    width: 60%;
+    max-height: 200px;
+    margin: 0 auto;
+}
+
+.service-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.service-info small {
     width: 80%;
     margin: 0 auto;
     display: block;
+}
+
+.section-disponibility {
+    display: flex;
+    width: 90%;
+    align-items: center;
+    padding: 4rem 0;
+    margin: 0 auto;
+}
+
+.section-disponibility img {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.section-contact {
+    background-color: var(--color-secondary);
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.section-contact .section-image img{
+    width: 200px;
+}
+
+.section-contact .contact-content {
+    text-align: center;
+}
+
+.contact-content p{
+    display: block;
+    width: 70%;
+    margin: 1rem auto;
+}
+
+.social-links svg {
+    fill: var(--color-decoration);
+    transition: fill 0.3s;
+}
+
+.social-links svg:hover {
+    fill: var(--color-decoration-hover);
+}
+
+.footer{
+    padding: 1rem;
+    font-style: italic;
 }
