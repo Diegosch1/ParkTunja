@@ -1,4 +1,11 @@
+import mongoose from "mongoose";
+import "dotenv/config";
+
 export const connectDB = async () => {
-  // TODO: conectar a la base de datos
-  console.log("Pendiente de implementar conexión a la base de datos MongoDB");
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("MongoDB connected");
+  } catch (error) {
+    console.log(error);
+  }
 };
