@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { login, logout, verifyToken } from "../controllers/auth.controller.js";
+import {
+  login,
+  logout,
+  verifyToken,
+} from "../controllers/auth.controller.js";
+
 import {
   register,
   getUser,
