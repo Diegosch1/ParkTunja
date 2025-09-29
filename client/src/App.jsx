@@ -4,6 +4,7 @@ import LandingPage from "./pages/landing/LandingPage";
 import LoginPage from "./pages/login/LoginPage";
 import { AuthProvider } from './context/AuthContext';
 import { UsersProvider } from './context/UsersContext';
+import { ParkingProvider } from './context/ParkingContext';
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -11,8 +12,9 @@ const App = () => {
   return (
     <AuthProvider>
       <UsersProvider>
+        <ParkingProvider>
 
-        <BrowserRouter>
+          <BrowserRouter>
           <ToastContainer
             position="bottom-right"
             autoClose={4000}
@@ -28,6 +30,8 @@ const App = () => {
             </Route>
           </Routes>
         </BrowserRouter>
+
+        </ParkingProvider>
       </UsersProvider>
     </AuthProvider>
   );
