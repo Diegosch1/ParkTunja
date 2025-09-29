@@ -1,24 +1,28 @@
 import { Router } from "express";
+import { login, logout, verifyToken } from "../controllers/auth.controller.js";
 import {
-  getParkings,
-  getParking,
-  createParking,
-  deleteParking,
-  updateParking,
-} from "../controllers/parking.controller.js";
+  register,
+  getUser,
+  getAllUsers,
+  updateUser,
+  deleteUser,
+} from "../controllers/admin.controller.js";
+import { authRequired, adminRequired } from "../middlewares/validateToken.js";
 
 const router = Router();
 
-// Endpoint de prueba
-router.get("/", (req, res) => {
-  res.json({ message: "Node server running" });
-});
+// User routes
+router.post("/login", login);
+router.post("/logout", logout);
 
-// Endpoint de prueba
-router.get("/parking", getParkings);
-router.get("/parking/:id", getParking);
-router.post("/parking", createParking);
-router.put("/parking/:id", updateParking);
-router.delete("/parking/:id", deleteParking);
+// Verify token route
+router.get("/verify", verifyToken);
+
+// Admin routes
+router.post("/register", adminRequired, register);
+router.get("/getUser/:id", adminRequired, getUser);
+router.get("/getAllUsers", adminRequired, getAllUsers);
+router.put("/updateUser/:id", adminRequired, updateUser);
+router.delete("/deleteUser/:id", adminRequired, deleteUser);
 
 export default router;
