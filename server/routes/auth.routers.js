@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { getParking } from "../controllers/parking.controller.js";
+import {
+  getParkings,
+  getParking,
+  createParking,
+  deleteParking,
+  updateParking,
+} from "../controllers/parking.controller.js";
 
 const router = Router();
 
@@ -9,6 +15,10 @@ router.get("/", (req, res) => {
 });
 
 // Endpoint de prueba
-router.get("/parking", getParking);
+router.get("/parking", getParkings);
+router.get("/parking/:id", getParking);
+router.post("/parking", createParking);
+router.put("/parking/:id", updateParking);
+router.delete("/parking/:id", deleteParking);
 
 export default router;
