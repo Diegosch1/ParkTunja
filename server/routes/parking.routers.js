@@ -10,11 +10,11 @@ import {
 
 const router = Router();
 
-// Endpoint CRUD para parkings
-router.get("/", getParkings);
-router.get("/:id", getParking);
-router.post("/", createParking);
-router.put("/:id", updateParking);
-router.delete("/:id", deleteParking);
+// CRUD for parkings
+router.get("/getParkings", getParkings);
+router.get("/getParking/:id", getParking);
+router.post("/createParking", createParking);
+router.put("/updateParking/:id", updateParking);
+router.delete("/deleteParking/:id", deleteParking);
 
 export default router;
