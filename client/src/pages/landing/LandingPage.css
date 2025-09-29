@@ -86,8 +86,12 @@
     margin: 0 auto;
 }
 
+.section-disponibility h2{
+    width: 100%;
+}
+
 .section-disponibility img {
-    width: 50%;
+    width: 40%;
     margin: 0 auto;
 }
 
@@ -106,7 +110,7 @@
 }
 
 .section-contact .section-image img{
-    width: 200px;
+    width: 150px;
 }
 
 .section-contact .contact-content {
@@ -131,4 +135,52 @@
 .footer{
     padding: 1rem;
     font-style: italic;
+}
+
+@media screen and (max-width: 768px) {
+    .main-section {
+        grid-template-columns: repeat(1, 1fr);
+        height: 60vh;
+    }
+
+    .main-section .section-content {
+        width: 90%;
+        padding: 1rem;
+    }
+
+    .section-services .services-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .service-card img {
+        width: 70%;
+        max-width: 200px;
+        height: auto;
+        max-height: none;
+    }
+
+    .section-disponibility {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .section-disponibility img {
+        width: 80%;
+    }
+
+    .section-contact {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .section-contact .section-image img{
+        width: 100px;
+    }
+
+    .contact-content p{
+        width: 90%;
+    }
+    
 }
