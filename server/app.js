@@ -2,6 +2,7 @@ import express, { json } from "express";
 import cors from "cors";
 import authRouter from "./routes/auth.routers.js";
 import parkingRouter from "./routes/parking.routers.js";
+import userRouter from "./routes/user.routers.js";
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/auth", authRouter);
+app.use("/users", userRouter);
 app.use("/parking", parkingRouter);
 
 export default app;
