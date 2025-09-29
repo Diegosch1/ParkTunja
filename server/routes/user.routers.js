@@ -14,7 +14,7 @@ const router = Router();
 // Admin routes
 router.post("/register", adminRequired, register);
 router.get("/getUser/:id", adminRequired, getUser);
-router.get("/getAllUsers", getAllUsers);
+router.get("/getAllUsers",adminRequired , getAllUsers);
 router.put("/updateUser/:id", adminRequired, updateUser);
 router.delete("/deleteUser/:id", adminRequired, deleteUser);
 
