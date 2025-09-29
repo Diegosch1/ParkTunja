@@ -1,0 +1,37 @@
+.responsive-nav-container {
+    display: none;
+}
+
+.responsive-nav-container .logo {
+    width: 100%;
+    max-width: 200px;
+    margin: 1rem auto;
+}
+
+.responsive-nav-container .link-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    padding: 1rem 0;
+    justify-content: center;
+}
+
+.responsive-nav-container .link-container.active {
+    background-color: var(--color-hover);
+}
+
+@media screen and (max-width: 980px) {
+    .responsive-nav-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        background-color: var(--color-secondary);
+    }
+
+    .responsive-nav-container .links-container {
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+    }
+}
