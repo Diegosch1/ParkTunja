@@ -60,6 +60,9 @@ export const getParking = async (req, res) => {
       return res.status(400).json({ error: "Invalid parking ID format" });
     }
     const foundParking = await Parking.findById(id);
+    if (!foundParking) {
+      return res.status(404).json({ error: "Parking not found" });
+    }
     res.json(foundParking);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -90,6 +93,10 @@ export const updateParking = async (req, res) => {
       },
       { new: true }
     );
+    if (!updatedParking) {
+      return res.status(404).json({ error: "Parking not found" });
+    }
+
     res.json(updatedParking);
   } catch (error) {
     if (error.name === "ValidationError") {
@@ -107,6 +114,10 @@ export const deleteParking = async (req, res) => {
       return res.status(400).json({ error: "Invalid parking ID format" });
     }
     const deletedParking = await Parking.findByIdAndDelete(id);
+
+    if (!deletedParking) {
+      return res.status(404).json({ error: "Parking not found" });
+    }
     res.json(deletedParking);
   } catch (error) {
     res.status(500).json({ error: error.message });
