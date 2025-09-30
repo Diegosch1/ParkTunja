@@ -13,6 +13,7 @@ const DashboardPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [parkingToEdit, setParkingToEdit] = useState(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     document.title = 'ParkTunja - Dashboard';
@@ -22,6 +23,31 @@ const DashboardPage = () => {
   const filteredParkings = parkings.filter(parking =>
     parking.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setShowSuggestions(value.length > 0);
+  };
+
+  const handleSuggestionClick = (parking) => {
+    setSearchTerm(parking.name);
+    setSelectedParking(parking);
+    setShowSuggestions(false);
+  };
+
+  const handleSearchBlur = () => {
+    // Delay para permitir que el click en sugerencia funcione
+    setTimeout(() => setShowSuggestions(false), 200);
+  };
+
+  const handleBuscarClick = () => {
+    if (filteredParkings.length > 0) {
+      setSelectedParking(filteredParkings[0]);
+      setSearchTerm(filteredParkings[0].name);
+    }
+    setShowSuggestions(false);
+  };
 
   const handleParkingSelect = (parking) => {
     setSelectedParking(parking);
@@ -85,11 +111,47 @@ const DashboardPage = () => {
           {/* Header con búsqueda y botones */}
           <div className="dashboard-header">
             <div className="search-container">
-              <InputComponent onChange={(e) => setSearchTerm(e.target.value)}
-                type='text' placeholder='Nombre parqueadero' value={searchTerm} className="search-input" />
+              <InputComponent 
+                onChange={handleSearchChange}
+                onBlur={handleSearchBlur}
+                type='text' 
+                placeholder='Buscar parqueadero...' 
+                value={searchTerm} 
+                className="search-input" 
+              />
+              
+              {/* Sugerencias de búsqueda */}
+              {showSuggestions && filteredParkings.length > 0 && (
+                <div className="search-suggestions">
+                  {filteredParkings.slice(0, 5).map((parking) => (
+                    <div
+                      key={parking.id}
+                      className="suggestion-item"
+                      onClick={() => handleSuggestionClick(parking)}
+                    >
+                      <div className="suggestion-info">
+                        <span className="suggestion-name">{parking.name}</span>
+                        <span className="suggestion-location">{parking.location}</span>
+                      </div>
+                      <span className="suggestion-capacity">
+                        {parking.totalCapacity} espacios
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Mensaje cuando no hay resultados */}
+              {showSuggestions && searchTerm && filteredParkings.length === 0 && (
+                <div className="search-suggestions">
+                  <div className="no-results">
+                    No se encontraron parqueaderos
+                  </div>
+                </div>
+              )}
             </div>
             <div className="header-buttons">
-              <ButtonComponent text="Buscar" />
+              <ButtonComponent text="Buscar" onClick={handleBuscarClick} />
               <ButtonComponent text="Crear" onClick={handleCreateParking} />
             </div>
           </div>
@@ -172,7 +234,7 @@ const DashboardPage = () => {
               <div className="loading">Cargando...</div>
             ) : (
               <div className="parking-items">
-                {filteredParkings.map((parking) => (
+                {parkings.map((parking) => (
                   <div
                     key={parking.id}
                     className={`parking-item ${selectedParking?.id === parking.id ? 'selected' : ''}`}
