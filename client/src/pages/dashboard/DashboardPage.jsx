@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import SidebarComponent from '../../components/sidebar/SidebarComponent'
 import ResponsiveNavComponent from '../../components/responsive-nav/ResponsiveNavComponent'
 import { useParking } from '../../context/ParkingContext'
 import './DashboardPage.css'
 import InputComponent from '../../components/input/InputComponent'
 import ButtonComponent from '../../components/button/ButtonComponent'
+import ParkingModal from '../../components/modal/ParkingModal'
 
 const DashboardPage = () => {
   const { parkings, getAllParkings, isLoading } = useParking();
   const [selectedParking, setSelectedParking] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [parkingToEdit, setParkingToEdit] = useState(null);
 
   useEffect(() => {
     document.title = 'ParkTunja - Dashboard';
@@ -24,8 +27,26 @@ const DashboardPage = () => {
     setSelectedParking(parking);
   };
 
-  // Calcular estadísticas del parqueadero seleccionado
-  const getStats = () => {
+  const handleCreateParking = () => {
+    setParkingToEdit(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditParking = () => {
+    if (selectedParking) {
+      setParkingToEdit(selectedParking);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleModalClose = async () => {
+    setIsModalOpen(false);
+    setParkingToEdit(null);
+    // Refrescar la lista de parqueaderos después de crear/editar
+    await getAllParkings();
+  };
+
+  const stats = useMemo(() => {
     if (!selectedParking) return null;
 
     // Simulando datos - en tu implementación real estos vendrían del backend
@@ -39,9 +60,19 @@ const DashboardPage = () => {
       rate: '$5,000/hora', // Esto vendría de tu modelo de tarifas
       schedule: '24/7' // Esto vendría de tu modelo de horarios
     };
-  };
+  }, [selectedParking?.id]);
 
-  const stats = getStats();
+  const spacesOccupancy = useMemo(() => {
+    if (!selectedParking) return [];
+
+    // Genera un array de estados de ocupación basado en el ID para que sea consistente
+    return Array.from({ length: selectedParking.totalCapacity }, (_, index) => {
+      // Usar el ID del parqueadero y el índice para generar un valor "aleatorio" pero consistente
+      const seed = selectedParking.id + index;
+      return (seed % 5) < 2; // Aproximadamente 40% de ocupación
+    });
+  }, [selectedParking?.id, selectedParking?.totalCapacity]);
+
 
   return (
     <div>
@@ -59,7 +90,7 @@ const DashboardPage = () => {
             </div>
             <div className="header-buttons">
               <ButtonComponent text="Buscar" />
-              <ButtonComponent text="Crear" />
+              <ButtonComponent text="Crear" onClick={handleCreateParking} />
             </div>
           </div>
 
@@ -87,7 +118,9 @@ const DashboardPage = () => {
                 <div className="stat-value">{stats ? stats.schedule : '--'}</div>
               </div>
 
-              <button className="btn-edit">Editar</button>
+              <button className="btn-edit" onClick={handleEditParking} disabled={!selectedParking}>
+                Editar
+              </button>
             </div>
 
             {/* Panel principal con grid de parqueaderos */}
@@ -102,7 +135,7 @@ const DashboardPage = () => {
                   {/* Grid de espacios de parqueadero */}
                   <div className="spaces-grid">
                     {Array.from({ length: selectedParking.totalCapacity }, (_, index) => {
-                      const isOccupied = Math.random() > 0.6; // Simulando ocupación aleatoria
+                      const isOccupied = spacesOccupancy[index]; // Simulando ocupación aleatoria
                       return (
                         <div
                           key={index}
@@ -157,6 +190,14 @@ const DashboardPage = () => {
           </div>
 
         </div>
+
+        {/* Modal para crear/editar parqueadero */}
+        <ParkingModal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          parkingToEdit={parkingToEdit}
+        />
+
       </div>
     </div>
   )

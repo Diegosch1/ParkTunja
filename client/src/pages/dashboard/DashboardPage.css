@@ -98,9 +98,17 @@
   margin-top: 1rem;
 }
 
-.btn-edit:hover {
+.btn-edit:hover:not(:disabled) {
   background-color: var(--color-decoration-hover);
   color: black;
+}
+
+.btn-edit:disabled {
+  background-color: transparent;
+  color: var(--color-text-muted);
+  border-color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Contenedor del grid principal */
