@@ -77,3 +77,8 @@ button {
   font-family: "Raleway", serif;
   cursor: pointer;
 }
+
+.toast-alert .Toastify__toast {
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+}
