@@ -1,0 +1,196 @@
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-primary);
+}
+
+.modal-header h2 {
+    color: var(--color-text-primary);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn:hover {
+    color: var(--color-decoration);
+}
+
+/* Modal Form */
+.modal-form {
+    padding: 2rem;
+}
+
+.form-row {
+    margin-bottom: 1.5rem;
+}
+
+.form-row:last-of-type {
+    margin-bottom: 2rem;
+}
+
+/* Error Messages */
+.error-message {
+    display: block;
+    color: var(--color-error);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    margin-left: 0.25rem;
+}
+
+.server-errors {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: rgba(206, 44, 44, 0.1);
+    border: 1px solid var(--color-error);
+    border-radius: 4px;
+}
+
+/* Input Error State */
+.input-wrapper input.error {
+    border-color: var(--color-error) !important;
+    box-shadow: 0 0 0 2px rgba(206, 44, 44, 0.2);
+}
+
+.input-wrapper input.error:focus {
+    border-color: var(--color-error) !important;
+    box-shadow: 0 0 0 2px rgba(206, 44, 44, 0.3);
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-direction: column;
+}
+
+.modal-actions button {
+    min-width: 120px;
+    width: 90%;
+    margin: 0 auto;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Button Styles Override */
+.modal-actions .btn-secondary {
+    background-color: transparent;
+    color: var(--color-text-muted);
+    border: 2px solid var(--color-border);
+}
+
+.modal-actions .btn-secondary:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text-primary);
+    border-color: var(--color-text-muted);
+}
+
+.modal-actions .btn-primary {
+    background-color: var(--color-decoration);
+    color: var(--color-text-secondary);
+    border: 2px solid var(--color-decoration);
+}
+
+.modal-actions .btn-primary:hover {
+    background-color: var(--color-decoration-hover);
+    border-color: var(--color-decoration-hover);
+}
+
+.modal-actions .btn-primary:disabled {
+    background-color: var(--color-text-muted);
+    border-color: var(--color-text-muted);
+    color: var(--color-secondary);
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 540px) {
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .modal-form {
+        padding: 1.5rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .modal-actions button {
+        width: 100%;
+        min-width: unset;
+    }
+}
