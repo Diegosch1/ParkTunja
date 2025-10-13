@@ -59,7 +59,14 @@ export const getParking = async (req, res) => {
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({ error: "Invalid parking ID format" });
     }
-    const foundParking = await Parking.findById(id);
+
+    // Find the parking by ID and populate flatRates
+    const foundParking = await Parking.findById(id).populate("flatRates");
+
+    if (!foundParking) {
+      return res.status(404).json({ error: "Parking not found" });
+    }
+
     res.json(foundParking);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -79,6 +86,12 @@ export const updateParking = async (req, res) => {
       { name, location, totalCapacity, notificationThreshold },
       { abortEarly: false }
     );
+
+    // Check if the parking exists
+    const parking = await Parking.findById(id);
+    if (!parking) {
+      return res.status(404).json({ error: "Parking not found" });
+    }
 
     const updatedParking = await Parking.findByIdAndUpdate(
       id,
@@ -106,6 +119,14 @@ export const deleteParking = async (req, res) => {
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({ error: "Invalid parking ID format" });
     }
+
+    // Check if the parking exists
+    const parking = await Parking.findById(id);
+    if (!parking) {
+      return res.status(404).json({ error: "Parking not found" });
+    }
+
+    // Delete the parking
     const deletedParking = await Parking.findByIdAndDelete(id);
     res.json(deletedParking);
   } catch (error) {
