@@ -5,6 +5,7 @@ import LoginPage from "./pages/login/LoginPage";
 import { AuthProvider } from './context/AuthContext';
 import { UsersProvider } from './context/UsersContext';
 import { ParkingProvider } from './context/ParkingContext';
+import { FlatRatesProvider } from './context/FlatRatesContext';
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from './AdminProtectedRoute';
@@ -15,6 +16,7 @@ const App = () => {
     <AuthProvider>
       <UsersProvider>
         <ParkingProvider>
+          <FlatRatesProvider>
 
           <BrowserRouter>
             <ToastContainer
@@ -36,6 +38,7 @@ const App = () => {
             </Routes>
           </BrowserRouter>
 
+          </FlatRatesProvider>
         </ParkingProvider>
       </UsersProvider>
     </AuthProvider>

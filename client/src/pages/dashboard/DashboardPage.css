@@ -422,7 +422,23 @@
 }
 
 /* Lista de parqueaderos (removida) */
-/* Lista de parqueaderos (removida) */
+
+/* Sección de tarifas */
+.flat-rates-section {
+  margin-top: 2rem;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .loading {
   text-align: center;

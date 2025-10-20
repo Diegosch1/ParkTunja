@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import SidebarComponent from '../../components/sidebar/SidebarComponent'
 import ResponsiveNavComponent from '../../components/responsive-nav/ResponsiveNavComponent'
 import { useParking } from '../../context/ParkingContext'
+import FlatRateManager from '../../components/flat-rate-manager/FlatRateManager'
 import './DashboardPage.css'
 import InputComponent from '../../components/input/InputComponent'
 import ButtonComponent from '../../components/button/ButtonComponent'
@@ -299,6 +300,13 @@ const DashboardPage = () => {
             </div>
 
           </div>
+
+          {/* Sección de gestión de tarifas */}
+          {selectedParking && (
+            <div className="flat-rates-section">
+              <FlatRateManager parkingLot={selectedParking} />
+            </div>
+          )}
 
         </div>
 
