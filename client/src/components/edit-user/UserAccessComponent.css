@@ -1,0 +1,130 @@
+.expanded-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.expanded-modal {
+    background: var(--color-secondary);
+    color: var(--color-text-primary);
+    border-radius: 8px;
+    padding: 30px;
+    width: 40%;
+    height: 80%;
+    overflow-y: auto;
+}
+
+.expanded-modal.full-screen {
+    width: 100%;
+    height: 100%;
+    padding-top: 5rem;
+}
+
+.expanded-modal .buttons {
+    position: relative;
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    height: 2rem;
+}
+
+.buttons .expanded {
+    position: relative;
+    color: color-mix(in srgb, var(--color-text-primary) 70%, transparent);
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+}
+
+.close-button.expanded{
+    top: 0rem;
+}
+
+.expanded-modal .expanded:hover {
+    color: var(--color-text-primary);
+}
+
+.expanded-modal .info-container {
+    display: flex;
+}
+
+.info-container div {
+    width: 50%;
+}
+
+.expanded-modal h3 {
+    margin: 3rem 0 2rem;
+}
+
+.edit-modal {
+    height: 65%;
+}
+
+.create-modal{
+    height: 75%;
+}
+
+.title-edit {
+    margin-top: 0;
+}
+
+.edit-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.edit-user-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.edit-user-form input,
+.edit-user-form select,
+.password-input {
+    background-color: var(--color-hover);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    height: 2rem;
+    color: var(--color-text-primary);
+    padding-left: 0.5rem;
+    box-sizing: border-box;
+}
+
+.edit-user-form span {
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.edit-user-button {
+    grid-column: 1 / 3;
+    margin-top: 1.5rem;
+}
+
+.edit-user-button{
+    background-color: var(--color-decoration);
+    padding: 1rem 0;
+    border: none;
+    border-radius: 8px;
+    transition: background-color .3s ease-in-out;
+}
+
+.edit-user-button:hover{
+    background-color: var(--color-decoration-hover);
+}
+
+@media screen and (max-width: 768px) {
+    .expanded-modal{
+        width: 80%;
+    }
+}
