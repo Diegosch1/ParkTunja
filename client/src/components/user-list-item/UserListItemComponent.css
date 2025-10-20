@@ -1,0 +1,101 @@
+.user-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    transition: background-color 0.3s ease-in-out;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-secondary);
+}
+
+.user-list-item:hover {
+    background-color: color-mix(in srgb, var(--color-secondary) 75%, var(--color-border));
+}
+
+.user-list-item.highlighted {
+    border: 1px solid #48390a;
+}
+
+.email-span {
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.role-badge {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    padding: 0.3rem 0.5rem;
+    min-width: 60px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.role-badge.admin {
+    background-color: #c69910;
+}
+
+.role-badge.user {
+    background-color: #3a6bb5;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.user-actions button {
+    padding: 0.5rem 1rem;
+}
+
+.user-actions button svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+
+.delete-btn {
+    background-color: var(--color-error);
+}
+
+.delete-btn:hover {
+    background-color: var(--color-error-hover);
+}
+
+.create-button{
+    background-color: var(--color-accent);
+    border: none;
+    border-radius: 8px;    
+}
+
+.edit-btn {
+    background-color: var(--color-accent);
+    border: none;
+    border-radius: 8px;
+}
+
+@media screen and (max-width: 768px) {
+    .user-list-item {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .user-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .user-actions button {
+        width: 90%;
+    }
+}

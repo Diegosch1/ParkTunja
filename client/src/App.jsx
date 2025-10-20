@@ -7,6 +7,8 @@ import { UsersProvider } from './context/UsersContext';
 import { ParkingProvider } from './context/ParkingContext';
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminProtectedRoute from './AdminProtectedRoute';
+import AdminPage from './pages/admin/AdminPage';
 
 const App = () => {
   return (
@@ -15,21 +17,24 @@ const App = () => {
         <ParkingProvider>
 
           <BrowserRouter>
-          <ToastContainer
-            position="bottom-right"
-            autoClose={4000}
-            className="toast-alert"
-            closeButton={false}
-            pauseOnHover={false}
-          />
-          <Routes>
-            <Route path='/' element={<LandingPage />} />
-            <Route path='/login' element={<LoginPage />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path='/dashboard' element={<DashboardPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+            <ToastContainer
+              position="bottom-right"
+              autoClose={4000}
+              className="toast-alert"
+              closeButton={false}
+              pauseOnHover={false}
+            />
+            <Routes>
+              <Route path='/' element={<LandingPage />} />
+              <Route path='/login' element={<LoginPage />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path='/dashboard' element={<DashboardPage />} />
+                {/* <Route element={<AdminProtectedRoute />}> */}
+                  <Route path='/admin-panel' element={<AdminPage />} />
+                {/* </Route> */}
+              </Route>
+            </Routes>
+          </BrowserRouter>
 
         </ParkingProvider>
       </UsersProvider>

@@ -1,0 +1,33 @@
+.user-management-container {
+  padding: 3rem;
+  width: 100%;
+}
+
+.user-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.not-users-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.not-users-found svg {
+  width: 50%;
+  height: 50%;
+}
+
+
+@media screen and (max-width: 400px) {
+  .user-management-container {
+    padding: 1rem 0;
+    width: 90%;
+    margin: 0 auto;
+  }
+
+}
