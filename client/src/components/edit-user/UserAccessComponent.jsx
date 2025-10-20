@@ -129,7 +129,7 @@ const UserAccessComponent = ({ onClose, userToEdit, onEdit, onCreate, currentUse
                         {errors.role && <span className="error">{`Este campo es obligatorio`}</span>}
                     </label>) : null}
 
-                    <ButtonComponent text={userToEdit ? `Actualizar` : `Crear`} className='edit-user-button' type='submit' disabled={!isValid}/>
+                    <ButtonComponent text={userToEdit ? `Actualizar` : `Crear`} className='edit-user-button' htmlType='submit' disabled={!isValid}/>
                 </form>
             </div>
         </div>

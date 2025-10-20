@@ -78,6 +78,12 @@
     border-radius: 8px;    
 }
 
+.delete-btn{
+    background-color: var(--color-error);
+    border: none;
+    border-radius: 8px;    
+}
+
 .edit-btn {
     background-color: var(--color-accent);
     border: none;
