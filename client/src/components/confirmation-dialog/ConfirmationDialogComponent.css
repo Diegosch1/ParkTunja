@@ -42,6 +42,8 @@
 .dialog-buttons button{
     width: 50%;
     padding: 0.7rem 0;
+    border: none;
+    border-radius: 8px;
 }
 
 .cancel-button {
