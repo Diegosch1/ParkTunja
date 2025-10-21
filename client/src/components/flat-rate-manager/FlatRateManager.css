@@ -1,0 +1,184 @@
+.flat-rate-manager {
+    width: 95%; 
+    background-color: var(--color-secondary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+}
+
+.flat-rate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.flat-rate-header h3 {
+    color: var(--color-decoration);
+    margin: 0;
+}
+
+.btn-add-rate {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.9rem;
+    background-color: var(--color-decoration);
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.btn-add-rate:hover {
+    background-color: var(--color-decoration-hover);
+}
+
+.loading-rates {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 2rem;
+    font-style: italic;
+}
+
+.no-rates {
+    text-align: center;
+    padding: 3rem 2rem;
+    background-color: var(--color-hover);
+    border-radius: 8px;
+    border: 2px dashed var(--color-border);
+}
+
+.no-rates p {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.no-rates small {
+    color: var(--color-text-muted);
+    opacity: 0.7;
+}
+
+.flat-rates-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.flat-rate-card {
+    background-color: var(--color-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.flat-rate-card:hover {
+    border-color: var(--color-decoration);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(232, 160, 29, 0.2);
+}
+
+.rate-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.rate-name {
+    color: var(--color-text-primary);
+    font-size: 1.1rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.rate-amount {
+    color: var(--color-decoration);
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0.2rem 0;
+}
+
+.rate-date {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+}
+
+.rate-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.rate-actions button {
+    padding: 0.8rem;
+    width: 100%;
+}
+
+.btn-edit:hover {
+    background-color: var(--color-accent-hover);
+}
+
+.btn-delete:hover {
+    background-color: var(--color-error);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .flat-rate-manager {
+        padding: 1rem;
+    }
+
+    .flat-rate-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .flat-rate-header h3 {
+        text-align: center;
+    }
+
+    .btn-add-rate {
+        width: 100%;
+    }
+
+    .flat-rates-list {
+        grid-template-columns: 1fr;
+    }
+
+    .flat-rate-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .rate-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .flat-rate-card {
+        padding: 1rem;
+    }
+
+    .rate-name {
+        font-size: 1rem;
+    }
+
+    .rate-amount {
+        font-size: 1.1rem;
+    }
+
+    .btn-icon {
+        font-size: 1.1rem;
+        padding: 0.4rem;
+    }
+}

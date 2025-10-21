@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import SidebarComponent from '../../components/sidebar/SidebarComponent'
 import ResponsiveNavComponent from '../../components/responsive-nav/ResponsiveNavComponent'
 import { useParking } from '../../context/ParkingContext'
+import FlatRateManager from '../../components/flat-rate-manager/FlatRateManager'
 import './DashboardPage.css'
 import InputComponent from '../../components/input/InputComponent'
 import ButtonComponent from '../../components/button/ButtonComponent'
@@ -14,6 +15,7 @@ const DashboardPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [parkingToEdit, setParkingToEdit] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [currentParkingIndex, setCurrentParkingIndex] = useState(0);
 
   useEffect(() => {
     document.title = 'ParkTunja - Dashboard';
@@ -34,6 +36,11 @@ const DashboardPage = () => {
     setSearchTerm(parking.name);
     setSelectedParking(parking);
     setShowSuggestions(false);
+    // Navegar al parqueadero seleccionado
+    const index = parkings.findIndex(p => p.id === parking.id);
+    if (index !== -1) {
+      setCurrentParkingIndex(index);
+    }
   };
 
   const handleSearchBlur = () => {
@@ -45,12 +52,33 @@ const DashboardPage = () => {
     if (filteredParkings.length > 0) {
       setSelectedParking(filteredParkings[0]);
       setSearchTerm(filteredParkings[0].name);
+      // Navegar al parqueadero encontrado
+      const index = parkings.findIndex(p => p.id === filteredParkings[0].id);
+      if (index !== -1) {
+        setCurrentParkingIndex(index);
+      }
     }
     setShowSuggestions(false);
   };
 
   const handleParkingSelect = (parking) => {
     setSelectedParking(parking);
+  };
+
+  const handlePrevParking = () => {
+    if (parkings.length > 0) {
+      const newIndex = currentParkingIndex > 0 ? currentParkingIndex - 1 : parkings.length - 1;
+      setCurrentParkingIndex(newIndex);
+      setSelectedParking(parkings[newIndex]);
+    }
+  };
+
+  const handleNextParking = () => {
+    if (parkings.length > 0) {
+      const newIndex = currentParkingIndex < parkings.length - 1 ? currentParkingIndex + 1 : 0;
+      setCurrentParkingIndex(newIndex);
+      setSelectedParking(parkings[newIndex]);
+    }
   };
 
   const handleCreateParking = () => {
@@ -111,15 +139,15 @@ const DashboardPage = () => {
           {/* Header con búsqueda y botones */}
           <div className="dashboard-header">
             <div className="search-container">
-              <InputComponent 
+              <InputComponent
                 onChange={handleSearchChange}
                 onBlur={handleSearchBlur}
-                type='text' 
-                placeholder='Buscar parqueadero...' 
-                value={searchTerm} 
-                className="search-input" 
+                type='text'
+                placeholder='Buscar parqueadero...'
+                value={searchTerm}
+                className="search-input"
               />
-              
+
               {/* Sugerencias de búsqueda */}
               {showSuggestions && filteredParkings.length > 0 && (
                 <div className="search-suggestions">
@@ -140,7 +168,7 @@ const DashboardPage = () => {
                   ))}
                 </div>
               )}
-              
+
               {/* Mensaje cuando no hay resultados */}
               {showSuggestions && searchTerm && filteredParkings.length === 0 && (
                 <div className="search-suggestions">
@@ -154,6 +182,52 @@ const DashboardPage = () => {
               <ButtonComponent text="Buscar" onClick={handleBuscarClick} />
               <ButtonComponent text="Crear" onClick={handleCreateParking} />
             </div>
+          </div>
+
+          {/* Navegación de parqueaderos con flechas */}
+          <div className="parking-navigation">
+            <button
+              className="nav-arrow nav-arrow-left"
+              onClick={handlePrevParking}
+              disabled={parkings.length === 0}
+            >
+              <span>‹</span>
+            </button>
+
+            <div className="parking-carousel">
+              {isLoading ? (
+                <div className="loading">Cargando...</div>
+              ) : parkings.length > 0 ? (
+                <div className="parking-carousel-track">
+                  {parkings.map((parking, index) => (
+                    <div
+                      key={parking.id}
+                      className={`parking-card ${selectedParking?.id === parking.id ? 'selected' : ''} ${index === currentParkingIndex ? 'current' : ''}`}
+                      onClick={() => {
+                        handleParkingSelect(parking);
+                        setCurrentParkingIndex(index);
+                      }}
+                    >
+                      <div className="parking-info">
+                        <h4>{parking.name}</h4>
+                        <p>{parking.location}</p>
+                        <span className="capacity">Capacidad: {parking.totalCapacity}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-parkings">No hay parqueaderos disponibles</div>
+              )}
+            </div>
+
+            <button
+              className="nav-arrow nav-arrow-right"
+              onClick={handleNextParking}
+              disabled={parkings.length === 0}
+            >
+              <span>›</span>
+            </button>
           </div>
 
           <div className="dashboard-content">
@@ -227,29 +301,12 @@ const DashboardPage = () => {
 
           </div>
 
-          {/* Lista de parqueaderos */}
-          <div className="parking-list">
-            <h3>Parqueaderos</h3>
-            {isLoading ? (
-              <div className="loading">Cargando...</div>
-            ) : (
-              <div className="parking-items">
-                {parkings.map((parking) => (
-                  <div
-                    key={parking.id}
-                    className={`parking-item ${selectedParking?.id === parking.id ? 'selected' : ''}`}
-                    onClick={() => handleParkingSelect(parking)}
-                  >
-                    <div className="parking-info">
-                      <h4>{parking.name}</h4>
-                      <p>{parking.location}</p>
-                      <span className="capacity">Capacidad: {parking.totalCapacity}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Sección de gestión de tarifas */}
+          {selectedParking && (
+            <div className="flat-rates-section">
+              <FlatRateManager parkingLot={selectedParking} />
+            </div>
+          )}
 
         </div>
 

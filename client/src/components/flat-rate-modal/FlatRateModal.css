@@ -1,0 +1,106 @@
+.flat-rate-modal {
+  max-width: 500px;
+}
+
+.flat-rate-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.flat-rate-modal .modal-header h2 {
+  color: var(--color-decoration);
+  font-size: 1.5rem;
+}
+
+.flat-rate-modal .modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flat-rate-modal .modal-close-btn:hover {
+  color: var(--color-error);
+}
+
+.flat-rate-modal .modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.flat-rate-modal .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.flat-rate-modal .error-message {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  width: 80%;
+  margin: 0 auto 0.5rem;
+  text-align: center;
+}
+
+.modal-form .input-wrapper{
+  margin-bottom: 0;
+}
+
+.flat-rate-modal .server-errors {
+  background-color: rgba(206, 44, 44, 0.1);
+  border: 1px solid var(--color-error);
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.flat-rate-modal .server-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0.25rem 0;
+}
+
+.flat-rate-modal .modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.flat-rate-modal .btn-cancel {
+  background-color: transparent;
+  border: 2px solid var(--color-text-muted);
+  color: var(--color-text-muted);
+}
+
+.flat-rate-modal .btn-cancel:hover {
+  background-color: var(--color-text-muted);
+  color: var(--color-secondary);
+}
+
+@media screen and (max-width: 540px) {
+  .flat-rate-modal {
+    max-width: 90vw;
+    margin: 1rem;
+  }
+
+  .flat-rate-modal .modal-actions {
+    flex-direction: column;
+  }
+
+  .flat-rate-modal .modal-actions button {
+    width: 100%;
+  }
+}
