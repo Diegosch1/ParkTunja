@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 import mongoose from "mongoose";
 import Parking from "../models/parking.model.js";
+import ParkingSpaces from "../models/parkingSpaces.model.js";
 
 const operatingHourValidationSchema = Yup.object().shape({
   weekDays: Yup.array()
@@ -64,7 +65,21 @@ export const createParking = async (req, res) => {
       notificationThreshold,
       operatingHours,
     });
+
+    const spots = new Map();
+    for (let i = 1; i <= totalCapacity; i++) {
+      spots.set(i.toString(), { isOccupied: false });
+    }
     await newParking.save();
+    
+    const newParkingSpaces = new ParkingSpaces({
+      parkingLot: newParking._id,
+      totalCapacity: totalCapacity,
+      availableSpots: totalCapacity,
+      spots: spots,
+    });
+    await newParkingSpaces.save();
+
     res.json(newParking);
   } catch (error) {
     if (error.name === "ValidationError") {

@@ -5,6 +5,7 @@ import authRouter from "./routes/auth.routers.js";
 import parkingRouter from "./routes/parking.routers.js";
 import flatRateRouter from "./routes/flatRates.routers.js";
 import userRouter from "./routes/user.routers.js";
+import vehicleRouter from "./routes/vehicle.routers.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -24,5 +25,6 @@ app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/parking", parkingRouter);
 app.use("/flatRates", flatRateRouter);
+app.use("/vehicleOps", vehicleRouter);
 
 export default app;

@@ -33,6 +33,18 @@ export const validateFlatRateExists = async (id) => {
   }
 };
 
+const operatingHourValidationSchema = Yup.object().shape({
+  weekDays: Yup.array()
+    .of(Yup.number().oneOf([1, 2, 3, 4, 5, 6, 7, 8]))
+    .required(),
+  openingTime: Yup.string()
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)")
+    .required(),
+  closingTime: Yup.string()
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)")
+    .required(),
+});
+
 export const createFlatRate = async (req, res) => {
   const { parkingLot, name, amount, operatingHour } = req.body; 
   
