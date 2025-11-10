@@ -1,11 +1,21 @@
 import { Schema, model } from "mongoose";
+import { operatingHourSchema } from "./operatingHour.model.js";
 
 const parkingSchema = new Schema(
   {
     name: { type: String, required: true, trim: true, maxlength: 255 },
     location: { type: String, required: true, trim: true, maxlength: 255 },
     totalCapacity: { type: Number, required: true, min: 0 },
-    notificationThreshold: { type: Number, required: true, min: 0 }, // Porcentaje de ocupación maximo para notificacr
+    notificationThreshold: { type: Number, required: true, min: 0 }, // Porcentaje de ocupación máximo para notificar
+   
+    operatingHours: {
+      type: [operatingHourSchema],
+      required: true,
+      validate: {
+        validator: (v) => Array.isArray(v) && v.length > 0,
+        message: "Debe haber al menos un horario configurado",
+      },
+    },
   },
   {
     timestamps: true,
@@ -18,10 +28,10 @@ const parkingSchema = new Schema(
 
 // Virtual field to populate flat rates
 parkingSchema.virtual("flatRates", {
-  ref: "FlatRate", // Reference name of the FlatRate model
-  localField: "_id", // Parking ID
-  foreignField: "parkingLot", // Field in FlatRate that references Parking
-  justOne: false, // One-to-many relationship
+  ref: "FlatRate",
+  localField: "_id",
+  foreignField: "parkingLot",
+  justOne: false,
 });
 
 export default model("Parking", parkingSchema);

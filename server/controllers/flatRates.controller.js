@@ -33,9 +33,21 @@ export const validateFlatRateExists = async (id) => {
   }
 };
 
-export const createFlatRate = async (req, res) => {
-  const { parkingLot, name, amount } = req.body;
+const operatingHourValidationSchema = Yup.object().shape({
+  weekDays: Yup.array()
+    .of(Yup.number().oneOf([1, 2, 3, 4, 5, 6, 7, 8]))
+    .required(),
+  openingTime: Yup.string()
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)")
+    .required(),
+  closingTime: Yup.string()
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)")
+    .required(),
+});
 
+export const createFlatRate = async (req, res) => {
+  const { parkingLot, name, amount, operatingHour } = req.body; 
+  
   try {
     await flatRateValidationSchema.validate(
       { parkingLot, name, amount },
@@ -44,8 +56,26 @@ export const createFlatRate = async (req, res) => {
 
     validateObjectId(parkingLot, "parking lot");
     await validateParkingExists(parkingLot);
+    
+    if (operatingHour) {
+      if (!Array.isArray(operatingHour.weekDays))
+        throw new Error("weekDays must be an array of numbers");
 
-    const newFlatRate = await FlatRate.create({ parkingLot, name, amount });
+      const invalidDays = operatingHour.weekDays.filter(
+        (d) => d < 1 || d > 8
+      );
+      if (invalidDays.length)
+        throw new Error(
+          `Invalid weekDays: ${invalidDays.join(", ")} (allowed: 1–8)`
+        );
+    }
+
+    const newFlatRate = await FlatRate.create({
+      parkingLot,
+      name,
+      amount,
+      operatingHour,
+    });
 
     res.status(201).json(newFlatRate);
   } catch (error) {
@@ -75,7 +105,7 @@ export const getFlatRate = async (req, res) => {
 
 export const updateFlatRate = async (req, res) => {
   const { id } = req.params;
-  const { parkingLot, name, amount } = req.body;
+  const { parkingLot, name, amount, operatingHour } = req.body;
 
   try {
     await flatRateValidationSchema.validate(
@@ -90,14 +120,16 @@ export const updateFlatRate = async (req, res) => {
 
     const updatedFlatRate = await FlatRate.findByIdAndUpdate(
       id,
-      { parkingLot, name, amount },
+      { parkingLot, name, amount, operatingHour },
       { new: true }
     );
+
     res.json(updatedFlatRate);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 export const deleteFlatRate = async (req, res) => {
   const { id } = req.params;
