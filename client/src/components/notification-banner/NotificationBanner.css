@@ -1,0 +1,133 @@
+.notification-banner {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  animation: slideDown 0.4s ease-out;
+  max-width: 90%;
+  width: 600px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.notification-content {
+  background: linear-gradient(135deg, #ff9500 0%, #ff6b00 100%);
+  color: #ffffff;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(255, 149, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 2px solid #ffaa33;
+}
+
+.notification-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.notification-message {
+  flex: 1;
+}
+
+.notification-message strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.notification-message p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.parking-name {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.occupancy-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.notification-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #ffffff;
+  font-size: 2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  line-height: 1;
+  padding: 0;
+}
+
+.notification-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .notification-banner {
+    top: 70px;
+    width: 95%;
+  }
+
+  .notification-content {
+    padding: 1rem;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .notification-icon {
+    font-size: 2.5rem;
+  }
+
+  .notification-message strong {
+    font-size: 1rem;
+  }
+
+  .notification-message p {
+    font-size: 0.9rem;
+  }
+
+  .notification-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 32px;
+    height: 32px;
+    font-size: 1.5rem;
+  }
+}

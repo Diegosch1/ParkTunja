@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InputComponent from '../input/InputComponent';
 import ButtonComponent from '../button/ButtonComponent';
+import OperatingHoursManager from '../operating-hours/OperatingHoursManager';
 import { useParking } from '../../context/ParkingContext';
 import { toast } from 'react-toastify';
 import './ParkingModal.css';
@@ -12,7 +13,8 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
         name: '',
         location: '',
         totalCapacity: '',
-        notificationThreshold: ''
+        notificationThreshold: '',
+        operatingHours: []
     });
 
     const [validationErrors, setValidationErrors] = useState({});
@@ -24,14 +26,16 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                     name: parkingToEdit.name || '',
                     location: parkingToEdit.location || '',
                     totalCapacity: parkingToEdit.totalCapacity?.toString() || '',
-                    notificationThreshold: parkingToEdit.notificationThreshold?.toString() || ''
+                    notificationThreshold: parkingToEdit.notificationThreshold?.toString() || '',
+                    operatingHours: parkingToEdit.operatingHours || []
                 });
             } else {
                 setFormData({
                     name: '',
                     location: '',
                     totalCapacity: '',
-                    notificationThreshold: ''
+                    notificationThreshold: '',
+                    operatingHours: []
                 });
             }
             setValidationErrors({});
@@ -78,6 +82,10 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
             newErrors.notificationThreshold = 'El umbral debe ser un número entre 0 y 100';
         }
 
+        if (!formData.operatingHours || formData.operatingHours.length === 0) {
+            newErrors.operatingHours = 'Debe configurar al menos un horario de operación';
+        }
+
         setValidationErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -94,7 +102,8 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
             name: formData.name.trim(),
             location: formData.location.trim(),
             totalCapacity: parseInt(formData.totalCapacity),
-            notificationThreshold: parseInt(formData.notificationThreshold)
+            notificationThreshold: parseInt(formData.notificationThreshold),
+            operatingHours: formData.operatingHours
         };
 
         try {
@@ -117,11 +126,26 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
             name: '',
             location: '',
             totalCapacity: '',
-            notificationThreshold: ''
+            notificationThreshold: '',
+            operatingHours: []
         });
         setValidationErrors({});
         clearErrors();
         onClose();
+    };
+
+    const handleOperatingHoursChange = (newHours) => {
+        setFormData(prev => ({
+            ...prev,
+            operatingHours: newHours
+        }));
+        // Clear validation error for operating hours
+        if (validationErrors.operatingHours) {
+            setValidationErrors(prev => ({
+                ...prev,
+                operatingHours: ''
+            }));
+        }
     };
 
     if (!isOpen) return null;
@@ -193,6 +217,17 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                         />
                         {validationErrors.notificationThreshold && (
                             <span className="error-message">{validationErrors.notificationThreshold}</span>
+                        )}
+                    </div>
+
+                    {/* Gestión de horarios de operación */}
+                    <div className="form-section">
+                        <OperatingHoursManager
+                            operatingHours={formData.operatingHours}
+                            onChange={handleOperatingHoursChange}
+                        />
+                        {validationErrors.operatingHours && (
+                            <span className="error-message">{validationErrors.operatingHours}</span>
                         )}
                     </div>
 

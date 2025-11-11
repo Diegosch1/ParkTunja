@@ -2,7 +2,11 @@ import React, { useEffect, useState, useMemo } from 'react'
 import SidebarComponent from '../../components/sidebar/SidebarComponent'
 import ResponsiveNavComponent from '../../components/responsive-nav/ResponsiveNavComponent'
 import { useParking } from '../../context/ParkingContext'
+import { useVehicleOps } from '../../context/VehicleOpsContext'
 import FlatRateManager from '../../components/flat-rate-manager/FlatRateManager'
+import VehicleEntryModal from '../../components/vehicle-entry/VehicleEntryModal'
+import VehicleExitModal from '../../components/vehicle-exit/VehicleExitModal'
+import NotificationBanner from '../../components/notification-banner/NotificationBanner'
 import './DashboardPage.css'
 import InputComponent from '../../components/input/InputComponent'
 import ButtonComponent from '../../components/button/ButtonComponent'
@@ -10,12 +14,15 @@ import ParkingModal from '../../components/modal/ParkingModal'
 
 const DashboardPage = () => {
   const { parkings, getAllParkings, isLoading } = useParking();
+  const { parkingSpacesInfo, getParkingSpaces, highOccupancyNotification, dismissNotification } = useVehicleOps();
   const [selectedParking, setSelectedParking] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [parkingToEdit, setParkingToEdit] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [currentParkingIndex, setCurrentParkingIndex] = useState(0);
+  const [showEntryModal, setShowEntryModal] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   useEffect(() => {
     document.title = 'ParkTunja - Dashboard';
@@ -63,6 +70,10 @@ const DashboardPage = () => {
 
   const handleParkingSelect = (parking) => {
     setSelectedParking(parking);
+    // Cargar información de espacios cuando se selecciona un parqueadero
+    if (parking?.id) {
+      getParkingSpaces(parking.id);
+    }
   };
 
   const handlePrevParking = () => {
@@ -100,37 +111,65 @@ const DashboardPage = () => {
     await getAllParkings();
   };
 
-  const stats = useMemo(() => {
-    if (!selectedParking) return null;
+  const handleVehicleOperationSuccess = async () => {
+    // Recargar información de espacios después de entrada/salida
+    if (selectedParking?.id) {
+      await getParkingSpaces(selectedParking.id);
+    }
+  };
 
-    // Simulando datos - en tu implementación real estos vendrían del backend
-    const occupiedSpaces = Math.floor(Math.random() * selectedParking.totalCapacity);
-    const freeSpaces = selectedParking.totalCapacity - occupiedSpaces;
-    const occupancyPercentage = Math.round((occupiedSpaces / selectedParking.totalCapacity) * 100);
+  const stats = useMemo(() => {
+    if (!selectedParking || !parkingSpacesInfo) return null;
+
+    const occupiedSpaces = parkingSpacesInfo.totalCapacity - parkingSpacesInfo.availableSpots;
+    const freeSpaces = parkingSpacesInfo.availableSpots;
+    const occupancyPercentage = Math.round((occupiedSpaces / parkingSpacesInfo.totalCapacity) * 100);
+
+    // Formatear horarios de operación
+    const formatSchedule = () => {
+      if (!selectedParking.operatingHours || selectedParking.operatingHours.length === 0) {
+        return 'Sin horarios';
+      }
+      // Mostrar el primer horario como referencia
+      const firstSchedule = selectedParking.operatingHours[0];
+      return `${firstSchedule.openingTime} - ${firstSchedule.closingTime}`;
+    };
 
     return {
       occupancyPercentage,
       freeSpaces,
-      rate: '$5,000/hora', // Esto vendría de tu modelo de tarifas
-      schedule: '24/7' // Esto vendría de tu modelo de horarios
+      occupiedSpaces,
+      schedule: formatSchedule()
     };
-  }, [selectedParking?.id]);
+  }, [selectedParking, parkingSpacesInfo]);
 
   const spacesOccupancy = useMemo(() => {
-    if (!selectedParking) return [];
+    if (!parkingSpacesInfo?.spots) return [];
 
-    // Genera un array de estados de ocupación basado en el ID para que sea consistente
-    return Array.from({ length: selectedParking.totalCapacity }, (_, index) => {
-      // Usar el ID del parqueadero y el índice para generar un valor "aleatorio" pero consistente
-      const seed = selectedParking.id + index;
-      return (seed % 5) < 2; // Aproximadamente 40% de ocupación
-    });
-  }, [selectedParking?.id, selectedParking?.totalCapacity]);
-
+    const spotsArray = [];
+    for (let i = 1; i <= parkingSpacesInfo.totalCapacity; i++) {
+      const spotData = parkingSpacesInfo.spots[i.toString()];
+      spotsArray.push({
+        number: i,
+        isOccupied: spotData?.isOccupied || false,
+        licensePlate: spotData?.licensePlate || null
+      });
+    }
+    return spotsArray;
+  }, [parkingSpacesInfo]);
 
   return (
     <div>
       <ResponsiveNavComponent />
+      
+      {/* Notificación de alta ocupación */}
+      <NotificationBanner 
+        show={highOccupancyNotification}
+        onDismiss={dismissNotification}
+        parkingName={selectedParking?.name || ''}
+        occupancyPercentage={stats?.occupancyPercentage || 0}
+      />
+
       <div className="main-content">
         <SidebarComponent />
         <div className="sidebar-spacer"></div>
@@ -245,13 +284,17 @@ const DashboardPage = () => {
               </div>
 
               <div className="stat-card">
-                <div className="stat-title">Tarifa</div>
-                <div className="stat-value">{stats ? stats.rate : '--'}</div>
-              </div>
-
-              <div className="stat-card">
                 <div className="stat-title">Horario</div>
                 <div className="stat-value">{stats ? stats.schedule : '--'}</div>
+              </div>
+
+              <div className="operations-buttons">
+                <button className="btn-operation btn-entry" onClick={() => setShowEntryModal(true)} disabled={!selectedParking}>
+                  Entrada
+                </button>
+                <button className="btn-operation btn-exit" onClick={() => setShowExitModal(true)} disabled={!selectedParking}>
+                  Salida
+                </button>
               </div>
 
               <button className="btn-edit" onClick={handleEditParking} disabled={!selectedParking}>
@@ -270,20 +313,18 @@ const DashboardPage = () => {
 
                   {/* Grid de espacios de parqueadero */}
                   <div className="spaces-grid">
-                    {Array.from({ length: selectedParking.totalCapacity }, (_, index) => {
-                      const isOccupied = spacesOccupancy[index]; // Simulando ocupación aleatoria
-                      return (
-                        <div
-                          key={index}
-                          className={`parking-space ${isOccupied ? 'occupied' : 'free'}`}
-                        >
-                          <div className="car-icon">
-                            {isOccupied ? '🚗' : ''}
-                          </div>
-                          <span className="space-number">{index + 1}</span>
+                    {spacesOccupancy.map((spot) => (
+                      <div
+                        key={spot.number}
+                        className={`parking-space ${spot.isOccupied ? 'occupied' : 'free'}`}
+                        title={spot.isOccupied ? `Placa: ${spot.licensePlate}` : 'Disponible'}
+                      >
+                        <div className="car-icon">
+                          {spot.isOccupied ? '🚗' : ''}
                         </div>
-                      );
-                    })}
+                        <span className="space-number">{spot.number}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ) : (
@@ -316,6 +357,23 @@ const DashboardPage = () => {
           onClose={handleModalClose}
           parkingToEdit={parkingToEdit}
         />
+
+        {/* Modales de operaciones de vehículos */}
+        {showEntryModal && selectedParking && (
+          <VehicleEntryModal
+            parkingId={selectedParking.id}
+            onClose={() => setShowEntryModal(false)}
+            onSuccess={handleVehicleOperationSuccess}
+          />
+        )}
+
+        {showExitModal && selectedParking && (
+          <VehicleExitModal
+            parkingId={selectedParking.id}
+            onClose={() => setShowExitModal(false)}
+            onSuccess={handleVehicleOperationSuccess}
+          />
+        )}
 
       </div>
     </div>

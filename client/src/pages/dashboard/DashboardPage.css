@@ -152,6 +152,51 @@
   font-weight: bold;
 }
 
+.operations-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-operation {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.btn-entry {
+  background-color: var(--color-decoration);
+  color: var(--color-primary);
+}
+
+.btn-entry:hover:not(:disabled) {
+  background-color: var(--color-decoration-hover);
+  transform: translateY(-1px);
+}
+
+.btn-exit {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.btn-exit:hover:not(:disabled) {
+  background-color: #5a99b0;
+  transform: translateY(-1px);
+}
+
+.btn-operation:disabled {
+  background-color: var(--color-text-muted);
+  color: var(--color-primary);
+  border-color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .btn-edit {
   background-color: transparent;
   color: var(--color-decoration);
@@ -162,6 +207,7 @@
   font-weight: 500;
   transition: all 0.3s ease;
   margin-top: 1rem;
+  width: 100%;
 }
 
 .btn-edit:hover:not(:disabled) {
@@ -378,7 +424,7 @@
 
 .parking-card:hover {
   background-color: var(--color-accent);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
