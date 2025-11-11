@@ -8,7 +8,7 @@
 
 .btn-primary {
     background: var(--color-decoration);
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
 }
 
 .btn-primary:hover {

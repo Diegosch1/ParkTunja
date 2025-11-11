@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './VehicleExitModal.css';
 import ButtonComponent from '../button/ButtonComponent';
+import AnimatedCheck from '../animated-check/AnimatedCheck';
 import { useVehicleOps } from '../../context/VehicleOpsContext';
 import { toast } from 'react-toastify';
 
@@ -133,7 +134,7 @@ const VehicleExitModal = ({ parkingId, onClose, onSuccess }) => {
             )}
 
             <div className="exit-info-box">
-              <p>⏰ La salida se registrará con la hora actual del sistema</p>
+              <p>💡 La salida se registrará con la hora actual del sistema</p>
               <p>💰 El sistema calculará automáticamente la tarifa</p>
             </div>
 
@@ -142,12 +143,12 @@ const VehicleExitModal = ({ parkingId, onClose, onSuccess }) => {
                 text="Cancelar"
                 onClick={handleClose}
                 className="btn-cancel"
-                type="button"
+                htmlType="button"
                 disabled={isSubmitting}
               />
               <ButtonComponent
                 text={isSubmitting ? "Calculando..." : "Procesar Salida"}
-                type="submit"
+                htmlType="submit"
                 disabled={isSubmitting || occupiedSpots.length === 0}
                 className="btn-submit"
               />
@@ -155,7 +156,9 @@ const VehicleExitModal = ({ parkingId, onClose, onSuccess }) => {
           </form>
         ) : (
           <div className="exit-result">
-            <div className="result-icon">✅</div>
+            <div className="result-icon">
+              <AnimatedCheck size={80} />
+            </div>
             <h3>Salida Registrada Exitosamente</h3>
             
             <div className="result-details">
@@ -189,7 +192,7 @@ const VehicleExitModal = ({ parkingId, onClose, onSuccess }) => {
               <ButtonComponent
                 text="Cerrar"
                 onClick={handleClose}
-                className="btn-close"
+                className="btn-close close-exit-result"
               />
             </div>
           </div>

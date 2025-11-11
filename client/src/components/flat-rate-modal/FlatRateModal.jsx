@@ -203,16 +203,19 @@ const FlatRateModal = ({ isOpen, onClose, parkingLotId, flatRateToEdit = null, o
                 <div className="modal-header">
                     <h2>{flatRateToEdit ? 'Editar Tarifa' : 'Crear Tarifa'}</h2>
                     <button className="modal-close-btn" onClick={onCloseX}>
-                        x
+                        ×
                     </button>
+                    
                 </div>
 
                 <form className="modal-form" onSubmit={handleSubmit}>
                     <div className="form-row">
+                        <label htmlFor="name">Nombre de la tarifa:</label>
                         <InputComponent
                             type="text"
-                            placeholder="Nombre de la tarifa (ej: Tarifa por hora)"
+                            placeholder="Ej: Tarifa por hora"
                             name="name"
+                            id="name"
                             value={formData.name}
                             onChange={handleInputChange}
                             className={validationErrors.name ? 'error' : ''}
@@ -223,10 +226,12 @@ const FlatRateModal = ({ isOpen, onClose, parkingLotId, flatRateToEdit = null, o
                     </div>
 
                     <div className="form-row">
+                        <label htmlFor="amount">Monto (COP):</label>
                         <InputComponent
                             type="number"
-                            placeholder="Monto (COP)"
+                            placeholder="Ej: 3000"
                             name="amount"
+                            id="amount"
                             value={formData.amount}
                             onChange={handleInputChange}
                             min="0"
@@ -292,9 +297,9 @@ const FlatRateModal = ({ isOpen, onClose, parkingLotId, flatRateToEdit = null, o
                         </div>
 
                         <div className="info-box">
-                            <p>💡 Esta tarifa se aplicará únicamente en los días y horas seleccionados</p>
+                            <p>Esta tarifa se aplicará únicamente en los días y horas seleccionados</p>
                             {formData.operatingHour.openingTime > formData.operatingHour.closingTime && (
-                                <p className="warning">⚠️ Horario nocturno detectado (cruza medianoche)</p>
+                                <p className="warning">Horario nocturno detectado (cruza medianoche)</p>
                             )}
                         </div>
                     </div>

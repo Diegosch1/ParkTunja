@@ -7,6 +7,7 @@ import FlatRateManager from '../../components/flat-rate-manager/FlatRateManager'
 import VehicleEntryModal from '../../components/vehicle-entry/VehicleEntryModal'
 import VehicleExitModal from '../../components/vehicle-exit/VehicleExitModal'
 import NotificationBanner from '../../components/notification-banner/NotificationBanner'
+import ParkingSpaceTooltip from '../../components/parking-space-tooltip/ParkingSpaceTooltip'
 import './DashboardPage.css'
 import InputComponent from '../../components/input/InputComponent'
 import ButtonComponent from '../../components/button/ButtonComponent'
@@ -152,7 +153,8 @@ const DashboardPage = () => {
       spotsArray.push({
         number: i,
         isOccupied: spotData?.isOccupied || false,
-        licensePlate: spotData?.licensePlate || null
+        licensePlate: spotData?.licensePlate || null,
+        entryTime: spotData?.entryTime || null
       });
     }
     return spotsArray;
@@ -314,16 +316,16 @@ const DashboardPage = () => {
                   {/* Grid de espacios de parqueadero */}
                   <div className="spaces-grid">
                     {spacesOccupancy.map((spot) => (
-                      <div
-                        key={spot.number}
-                        className={`parking-space ${spot.isOccupied ? 'occupied' : 'free'}`}
-                        title={spot.isOccupied ? `Placa: ${spot.licensePlate}` : 'Disponible'}
-                      >
-                        <div className="car-icon">
-                          {spot.isOccupied ? '🚗' : ''}
+                      <ParkingSpaceTooltip key={spot.number} spot={spot}>
+                        <div
+                          className={`parking-space ${spot.isOccupied ? 'occupied' : 'free'}`}
+                        >
+                          <div className="car-icon">
+                            {spot.isOccupied ? '🚗' : ''}
+                          </div>
+                          <span className="space-number">{spot.number}</span>
                         </div>
-                        <span className="space-number">{spot.number}</span>
-                      </div>
+                      </ParkingSpaceTooltip>
                     ))}
                   </div>
                 </div>

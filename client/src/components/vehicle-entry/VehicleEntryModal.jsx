@@ -12,18 +12,26 @@ const VehicleEntryModal = ({ parkingId, onClose, onSuccess }) => {
     licensePlate: ''
   });
   const [availableSpots, setAvailableSpots] = useState([]);
+  const [occupiedPlates, setOccupiedPlates] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (parkingSpacesInfo?.spots) {
-      // Filtrar espacios disponibles
+      // Filtrar espacios disponibles y recopilar placas ocupadas
       const available = [];
+      const plates = [];
+      
       for (const [spotNum, spotData] of Object.entries(parkingSpacesInfo.spots)) {
         if (!spotData.isOccupied) {
           available.push(parseInt(spotNum));
+        } else if (spotData.licensePlate) {
+          // Guardar placas ocupadas en mayúsculas para comparación
+          plates.push(spotData.licensePlate.toUpperCase());
         }
       }
+      
       setAvailableSpots(available.sort((a, b) => a - b));
+      setOccupiedPlates(plates);
     }
   }, [parkingSpacesInfo]);
 
@@ -45,6 +53,13 @@ const VehicleEntryModal = ({ parkingId, onClose, onSuccess }) => {
     }
     if (!formData.licensePlate.trim()) {
       toast.error('Debe ingresar la placa del vehículo');
+      return;
+    }
+
+    // Validar si la placa ya está registrada en el parqueadero
+    const plateToCheck = formData.licensePlate.trim().toUpperCase();
+    if (occupiedPlates.includes(plateToCheck)) {
+      toast.error(`El vehículo con placa ${plateToCheck} ya se encuentra en el parqueadero`);
       return;
     }
 
@@ -125,8 +140,8 @@ const VehicleEntryModal = ({ parkingId, onClose, onSuccess }) => {
           </div>
 
           <div className="entry-info-box">
-            <p>La entrada se registrará con la hora actual del sistema</p>
-            <p>Asegúrese de verificar la placa antes de confirmar</p>
+            <p>💡 La entrada se registrará con la hora actual del sistema</p>
+            <p>❗ Asegúrese de verificar la placa antes de confirmar</p>
           </div>
 
           <div className="modal-actions">
@@ -134,11 +149,11 @@ const VehicleEntryModal = ({ parkingId, onClose, onSuccess }) => {
               text="Cancelar"
               onClick={onClose}
               className="btn-cancel"
-              type="button"
+              htmlType="button"
             />
             <ButtonComponent
               text={isSubmitting ? "Registrando..." : "Registrar Entrada"}
-              type="submit"
+              htmlType="submit"
               disabled={isSubmitting || availableSpots.length === 0}
               className="btn-submit"
             />

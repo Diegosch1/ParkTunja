@@ -71,7 +71,7 @@
 }
 
 .modal-close-btn:hover {
-    color: var(--color-decoration);
+    color: var(--color-error);
 }
 
 /* Modal Form */
@@ -85,6 +85,23 @@
 
 .form-row:last-of-type {
     margin-bottom: 2rem;
+}
+
+.form-row label {
+    display: block;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+}
+
+.form-section label {
+    display: block;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
 }
 
 /* Error Messages */
@@ -149,7 +166,7 @@
 
 .modal-actions .btn-primary {
     background-color: var(--color-decoration);
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
 }
 
 .modal-actions .btn-primary:hover {

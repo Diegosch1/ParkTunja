@@ -62,13 +62,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
   transition: all 0.2s ease;
 }
 
 .close-button:hover {
-  background-color: var(--color-error, #ce2c2c);
-  transform: rotate(90deg);
+  color: var(--color-error);
 }
 
 .form-group {

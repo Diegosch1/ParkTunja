@@ -162,10 +162,12 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
 
                 <form className="modal-form" onSubmit={handleSubmit}>
                     <div className="form-row">
+                        <label htmlFor="name">Nombre del parqueadero:</label>
                         <InputComponent
                             type="text"
-                            placeholder="Nombre del parqueadero"
+                            placeholder="Ej: Parqueadero Central"
                             name="name"
+                            id="name"
                             value={formData.name}
                             onChange={handleInputChange}
                             className={validationErrors.name ? 'error' : ''}
@@ -176,10 +178,12 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                     </div>
 
                     <div className="form-row">
+                        <label htmlFor="location">Ubicación:</label>
                         <InputComponent
                             type="text"
-                            placeholder="Ubicación"
+                            placeholder="Ej: Calle 10 # 5-20"
                             name="location"
+                            id="location"
                             value={formData.location}
                             onChange={handleInputChange}
                             className={validationErrors.location ? 'error' : ''}
@@ -190,10 +194,12 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                     </div>
 
                     <div className="form-row">
+                        <label htmlFor="totalCapacity">Capacidad total de espacios:</label>
                         <InputComponent
                             type="number"
-                            placeholder="Capacidad total"
+                            placeholder="Ej: 50"
                             name="totalCapacity"
+                            id="totalCapacity"
                             value={formData.totalCapacity}
                             onChange={handleInputChange}
                             min="1"
@@ -205,10 +211,12 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                     </div>
 
                     <div className="form-row">
+                        <label htmlFor="notificationThreshold">Umbral de notificación (porcentaje):</label>
                         <InputComponent
                             type="number"
-                            placeholder="Umbral de notificación (%)"
+                            placeholder="Ej: 80"
                             name="notificationThreshold"
+                            id="notificationThreshold"
                             value={formData.notificationThreshold}
                             onChange={handleInputChange}
                             min="0"
@@ -222,6 +230,7 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
 
                     {/* Gestión de horarios de operación */}
                     <div className="form-section">
+                        <label>Horarios de operación:</label>
                         <OperatingHoursManager
                             operatingHours={formData.operatingHours}
                             onChange={handleOperatingHoursChange}

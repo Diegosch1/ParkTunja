@@ -47,6 +47,13 @@
   margin-bottom: 1rem;
 }
 
+.flat-rate-modal .form-row label {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
 .flat-rate-modal .error-message {
   color: var(--color-error);
   font-size: 0.875rem;
@@ -85,7 +92,7 @@
 }
 
 .btn-cancel {
-  background-color: var(--color-text-muted);
+  background-color: #7b7878;
   transition: background-color 0.3s ease-in-out;
 }
 
