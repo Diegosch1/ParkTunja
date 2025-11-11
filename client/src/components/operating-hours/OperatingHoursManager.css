@@ -1,0 +1,196 @@
+.operating-hours-manager {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--color-secondary, #111722);
+  border-radius: 8px;
+}
+
+.hours-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.hours-header h3 {
+  color: var(--color-decoration, #E8A01D);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.hours-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.no-hours {
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-text-muted, #727576);
+}
+
+.hour-form input{
+  cursor: pointer;
+}
+
+.hour-form input::-webkit-calendar-picker-indicator{
+  filter: invert(1) hue-rotate(180deg);
+}
+
+
+.hour-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--color-primary, #141A23);
+  border-radius: 6px;
+  border: 1px solid var(--color-hover, #202F36);
+  transition: all 0.3s ease;
+}
+
+.hour-card:hover {
+  border-color: var(--color-accent, #487D91);
+  transform: translateY(-2px);
+}
+
+.hour-info {
+  flex: 1;
+}
+
+.hour-days {
+  color: var(--color-decoration, #E8A01D);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.hour-times {
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+.hour-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-edit-hour,
+.btn-delete-hour {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-edit-hour:hover {
+  background-color: var(--color-hover, #202F36);
+}
+
+.btn-delete-hour:hover {
+  background-color: var(--color-error, #ce2c2c);
+}
+
+/* Formulario */
+.hour-form {
+  background-color: var(--color-primary, #141A23);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 2px solid var(--color-decoration, #E8A01D);
+  margin-top: 1rem;
+}
+
+.hour-form h4 {
+  color: var(--color-decoration, #E8A01D);
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+/* Selector de días */
+.days-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.day-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--color-hover, #202F36);
+  color: #ffffff;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.day-button:hover {
+  border-color: var(--color-accent, #487D91);
+}
+
+.day-button.selected {
+  background-color: var(--color-decoration, #E8A01D);
+  color: var(--color-primary, #141A23);
+  font-weight: 600;
+  border-color: var(--color-decoration, #E8A01D);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.form-actions button{
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 0;
+}
+
+
+.btn-save {
+  background-color: var(--color-decoration, #E8A01D) !important;
+}
+
+.btn-save:hover {
+  background-color: var(--color-decoration-hover, #fcb533) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .days-selector {
+    flex-direction: column;
+  }
+
+  .day-button {
+    width: 100%;
+  }
+
+  .hour-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hour-actions {
+    margin-top: 0.75rem;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import { UsersProvider } from './context/UsersContext';
 import { ParkingProvider } from './context/ParkingContext';
 import { FlatRatesProvider } from './context/FlatRatesContext';
+import { VehicleOpsProvider } from './context/VehicleOpsContext';
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from './AdminProtectedRoute';
@@ -17,6 +18,7 @@ const App = () => {
       <UsersProvider>
         <ParkingProvider>
           <FlatRatesProvider>
+            <VehicleOpsProvider>
 
           <BrowserRouter>
             <ToastContainer
@@ -38,6 +40,7 @@ const App = () => {
             </Routes>
           </BrowserRouter>
 
+          </VehicleOpsProvider>
           </FlatRatesProvider>
         </ParkingProvider>
       </UsersProvider>

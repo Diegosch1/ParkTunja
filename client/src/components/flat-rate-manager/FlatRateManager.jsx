@@ -82,6 +82,23 @@ const FlatRateManager = ({ parkingLot }) => {
         }).format(amount);
     };
 
+    const formatDays = (days) => {
+        const DAYS_MAP = {
+            1: 'Lun',
+            2: 'Mar',
+            3: 'Mié',
+            4: 'Jue',
+            5: 'Vie',
+            6: 'Sáb',
+            7: 'Dom',
+            8: 'Festivo'
+        };
+        
+        if (!days || days.length === 0) return 'No configurado';
+        
+        return days.sort((a, b) => a - b).map(d => DAYS_MAP[d]).join(', ');
+    };
+
     return (
         <div className="flat-rate-manager">
             <div className="flat-rate-header">
@@ -107,6 +124,23 @@ const FlatRateManager = ({ parkingLot }) => {
                             <div className="rate-info">
                                 <h4 className="rate-name">{flatRate.name}</h4>
                                 <p className="rate-amount">{formatCurrency(flatRate.amount)}</p>
+                                
+                                {/* Horario de operación */}
+                                {flatRate.operatingHour && (
+                                    <div className="rate-schedule">
+                                        <div className="schedule-item">
+                                            <span className="schedule-label">Días:</span>
+                                            <span className="schedule-value">{formatDays(flatRate.operatingHour.weekDays)}</span>
+                                        </div>
+                                        <div className="schedule-item">
+                                            <span className="schedule-label">Horario:</span>
+                                            <span className="schedule-value">
+                                                {flatRate.operatingHour.openingTime} - {flatRate.operatingHour.closingTime}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                
                                 <small className="rate-date">
                                     Creada: {new Date(flatRate.createdAt).toLocaleDateString('es-CO')}
                                 </small>

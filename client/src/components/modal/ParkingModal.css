@@ -19,7 +19,7 @@
     border: 1px solid var(--color-border);
     border-radius: 8px;
     width: 90%;
-    max-width: 500px;
+    max-width: 700px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -71,7 +71,7 @@
 }
 
 .modal-close-btn:hover {
-    color: var(--color-decoration);
+    color: var(--color-error);
 }
 
 /* Modal Form */
@@ -85,6 +85,23 @@
 
 .form-row:last-of-type {
     margin-bottom: 2rem;
+}
+
+.form-row label {
+    display: block;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+}
+
+.form-section label {
+    display: block;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
 }
 
 /* Error Messages */
@@ -128,7 +145,7 @@
 
 .modal-actions button {
     min-width: 120px;
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
     border-radius: 8px;
     padding: 0.75rem 1.5rem;
@@ -149,8 +166,7 @@
 
 .modal-actions .btn-primary {
     background-color: var(--color-decoration);
-    color: var(--color-text-secondary);
-    border: 2px solid var(--color-decoration);
+    color: var(--color-text-primary);
 }
 
 .modal-actions .btn-primary:hover {
@@ -163,6 +179,13 @@
     border-color: var(--color-text-muted);
     color: var(--color-secondary);
     cursor: not-allowed;
+}
+
+/* Form Section */
+.form-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
 }
 
 /* Responsive */

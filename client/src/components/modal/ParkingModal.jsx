@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InputComponent from '../input/InputComponent';
 import ButtonComponent from '../button/ButtonComponent';
+import OperatingHoursManager from '../operating-hours/OperatingHoursManager';
 import { useParking } from '../../context/ParkingContext';
 import { toast } from 'react-toastify';
 import './ParkingModal.css';
@@ -12,7 +13,8 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
         name: '',
         location: '',
         totalCapacity: '',
-        notificationThreshold: ''
+        notificationThreshold: '',
+        operatingHours: []
     });
 
     const [validationErrors, setValidationErrors] = useState({});
@@ -24,14 +26,16 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                     name: parkingToEdit.name || '',
                     location: parkingToEdit.location || '',
                     totalCapacity: parkingToEdit.totalCapacity?.toString() || '',
-                    notificationThreshold: parkingToEdit.notificationThreshold?.toString() || ''
+                    notificationThreshold: parkingToEdit.notificationThreshold?.toString() || '',
+                    operatingHours: parkingToEdit.operatingHours || []
                 });
             } else {
                 setFormData({
                     name: '',
                     location: '',
                     totalCapacity: '',
-                    notificationThreshold: ''
+                    notificationThreshold: '',
+                    operatingHours: []
                 });
             }
             setValidationErrors({});
@@ -78,6 +82,10 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
             newErrors.notificationThreshold = 'El umbral debe ser un número entre 0 y 100';
         }
 
+        if (!formData.operatingHours || formData.operatingHours.length === 0) {
+            newErrors.operatingHours = 'Debe configurar al menos un horario de operación';
+        }
+
         setValidationErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -94,7 +102,8 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
             name: formData.name.trim(),
             location: formData.location.trim(),
             totalCapacity: parseInt(formData.totalCapacity),
-            notificationThreshold: parseInt(formData.notificationThreshold)
+            notificationThreshold: parseInt(formData.notificationThreshold),
+            operatingHours: formData.operatingHours
         };
 
         try {
@@ -117,11 +126,26 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
             name: '',
             location: '',
             totalCapacity: '',
-            notificationThreshold: ''
+            notificationThreshold: '',
+            operatingHours: []
         });
         setValidationErrors({});
         clearErrors();
         onClose();
+    };
+
+    const handleOperatingHoursChange = (newHours) => {
+        setFormData(prev => ({
+            ...prev,
+            operatingHours: newHours
+        }));
+        // Clear validation error for operating hours
+        if (validationErrors.operatingHours) {
+            setValidationErrors(prev => ({
+                ...prev,
+                operatingHours: ''
+            }));
+        }
     };
 
     if (!isOpen) return null;
@@ -138,10 +162,12 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
 
                 <form className="modal-form" onSubmit={handleSubmit}>
                     <div className="form-row">
+                        <label htmlFor="name">Nombre del parqueadero:</label>
                         <InputComponent
                             type="text"
-                            placeholder="Nombre del parqueadero"
+                            placeholder="Ej: Parqueadero Central"
                             name="name"
+                            id="name"
                             value={formData.name}
                             onChange={handleInputChange}
                             className={validationErrors.name ? 'error' : ''}
@@ -152,10 +178,12 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                     </div>
 
                     <div className="form-row">
+                        <label htmlFor="location">Ubicación:</label>
                         <InputComponent
                             type="text"
-                            placeholder="Ubicación"
+                            placeholder="Ej: Calle 10 # 5-20"
                             name="location"
+                            id="location"
                             value={formData.location}
                             onChange={handleInputChange}
                             className={validationErrors.location ? 'error' : ''}
@@ -166,10 +194,12 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                     </div>
 
                     <div className="form-row">
+                        <label htmlFor="totalCapacity">Capacidad total de espacios:</label>
                         <InputComponent
                             type="number"
-                            placeholder="Capacidad total"
+                            placeholder="Ej: 50"
                             name="totalCapacity"
+                            id="totalCapacity"
                             value={formData.totalCapacity}
                             onChange={handleInputChange}
                             min="1"
@@ -181,10 +211,12 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                     </div>
 
                     <div className="form-row">
+                        <label htmlFor="notificationThreshold">Umbral de notificación (porcentaje):</label>
                         <InputComponent
                             type="number"
-                            placeholder="Umbral de notificación (%)"
+                            placeholder="Ej: 80"
                             name="notificationThreshold"
+                            id="notificationThreshold"
                             value={formData.notificationThreshold}
                             onChange={handleInputChange}
                             min="0"
@@ -193,6 +225,18 @@ const ParkingModal = ({ isOpen, onClose, parkingToEdit = null }) => {
                         />
                         {validationErrors.notificationThreshold && (
                             <span className="error-message">{validationErrors.notificationThreshold}</span>
+                        )}
+                    </div>
+
+                    {/* Gestión de horarios de operación */}
+                    <div className="form-section">
+                        <label>Horarios de operación:</label>
+                        <OperatingHoursManager
+                            operatingHours={formData.operatingHours}
+                            onChange={handleOperatingHoursChange}
+                        />
+                        {validationErrors.operatingHours && (
+                            <span className="error-message">{validationErrors.operatingHours}</span>
                         )}
                     </div>
 
