@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ResponsiveNavComponent from '../../components/responsive-nav/ResponsiveNavComponent';
 import SidebarComponent from '../../components/sidebar/SidebarComponent';
-import './Adminpage.css';
+import './AdminPage.css';
 import { useUsers } from "../../context/UsersContext";
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
