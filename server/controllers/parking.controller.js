@@ -26,21 +26,50 @@ const parkingValidationSchema = Yup.object().shape({
 });
 
 const validateOperatingHoursOverlap = (operatingHours) => {
+  // helper: "HH:mm" -> minutes since 00:00
+  const timeToMinutes = (t) => {
+    const [hh, mm] = t.split(":").map(Number);
+    return hh * 60 + mm;
+  };
+
+  // build one or two intervals (in minutes) for a schedule, handling crosses-midnight
+  const buildIntervals = (open, close) => {
+    const o = timeToMinutes(open);
+    const c = timeToMinutes(close);
+    if (o === c) {
+      // interpret as full day
+      return [[0, 24 * 60]];
+    }
+    if (o < c) return [[o, c]];
+    // crosses midnight: [o, 1440) and [0, c)
+    return [[o, 24 * 60], [0, c]];
+  };
+
+  const intervalsOverlap = (a, b) => a[0] < b[1] && b[0] < a[1];
+
+  const rangesOverlap = (open1, close1, open2, close2) => {
+    const ints1 = buildIntervals(open1, close1);
+    const ints2 = buildIntervals(open2, close2);
+    for (const i1 of ints1) {
+      for (const i2 of ints2) {
+        if (intervalsOverlap(i1, i2)) return true;
+      }
+    }
+    return false;
+  };
+
   for (let i = 0; i < operatingHours.length; i++) {
     const { weekDays: daysA, openingTime: openA, closingTime: closeA } = operatingHours[i];
     for (let j = i + 1; j < operatingHours.length; j++) {
       const { weekDays: daysB, openingTime: openB, closingTime: closeB } = operatingHours[j];
-      const overlapDays = daysA.some((d) => daysB.includes(d));
-      if (overlapDays) {
-        const startA = openA;
-        const endA = closeA;
-        const startB = openB;
-        const endB = closeB;
-        if (!(endA <= startB || endB <= startA)) {
-          throw new Error(
-            `Overlapping operating hours detected between schedules ${i + 1} and ${j + 1}`
-          );
-        }
+      const intersection = daysA.filter((d) => daysB.includes(d));
+      if (intersection.length === 0) continue;
+
+      // if any interval overlaps (including containment), raise
+      if (rangesOverlap(openA, closeA, openB, closeB)) {
+        throw new Error(
+          `Overlapping operating hours detected between schedules ${i + 1} and ${j + 1}. Intersecting days: ${intersection.join(", ")}`
+        );
       }
     }
   }
