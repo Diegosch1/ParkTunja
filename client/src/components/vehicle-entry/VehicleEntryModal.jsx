@@ -34,7 +34,7 @@ const VehicleEntryModal = ({ parkingId, parking, onClose, onSuccess }) => {
     for (const schedule of parking.operatingHours) {
       if (schedule.weekDays.includes(currentDay) || schedule.weekDays.includes(8)) { // 8 = Festivo
         const { openingTime, closingTime } = schedule;
-        
+
         // Caso especial: 00:00 - 00:00 significa 24 horas
         if (openingTime === '00:00' && closingTime === '00:00') {
           return true;
@@ -85,7 +85,7 @@ const VehicleEntryModal = ({ parkingId, parking, onClose, onSuccess }) => {
       // Filtrar espacios disponibles y recopilar placas ocupadas
       const available = [];
       const plates = [];
-      
+
       for (const [spotNum, spotData] of Object.entries(parkingSpacesInfo.spots)) {
         if (!spotData.isOccupied) {
           available.push(parseInt(spotNum));
@@ -94,21 +94,23 @@ const VehicleEntryModal = ({ parkingId, parking, onClose, onSuccess }) => {
           plates.push(spotData.licensePlate.toUpperCase());
         }
       }
-      
+
       setAvailableSpots(available.sort((a, b) => a - b));
       setOccupiedPlates(plates);
     }
   }, [parkingSpacesInfo]);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: name === "licensePlate" ? value.toUpperCase() : value
     });
   };
 
   const handleSubmit = async (e) => {
-    
+
     e.preventDefault();
 
     // Validar que haya tarifas configuradas
@@ -149,11 +151,11 @@ const VehicleEntryModal = ({ parkingId, parking, onClose, onSuccess }) => {
       });
 
       toast.success(`Vehículo ${formData.licensePlate.toUpperCase()} ingresado en espacio ${formData.spotNumber}`);
-      
+
       if (onSuccess) {
         onSuccess();
       }
-      
+
       onClose();
     } catch (error) {
       const errorMsg = error.response?.data?.error || 'Error al registrar entrada';
@@ -208,6 +210,7 @@ const VehicleEntryModal = ({ parkingId, parking, onClose, onSuccess }) => {
             <InputComponent
               type="text"
               name="licensePlate"
+              className="input-license-plate"
               value={formData.licensePlate}
               onChange={handleChange}
               placeholder="Ej: ABC123"
