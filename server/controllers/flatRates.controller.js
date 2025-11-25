@@ -40,12 +40,31 @@ const timeToMinutes = (t) => {
 };
 
 const buildIntervals = (open, close) => {
+  const normalize = (t) => (t === "24:00" ? "23:59" : t);
+
+  open = normalize(open);
+  close = normalize(close);
+
   const o = timeToMinutes(open);
   const c = timeToMinutes(close);
-  if (o === c) return [[0, 24 * 60]];
-  if (o < c) return [[o, c]];
-  return [[o, 24 * 60], [0, c]]; // crosses midnight
+
+  // Caso 24 horas real
+  if (open === close) {
+    return [[0, 24 * 60]]; // cubre el día completo
+  }
+
+  // Caso normal (sin cruzar medianoche)
+  if (o < c) {
+    return [[o, c]];
+  }
+
+  // Caso cruza medianoche
+  return [
+    [o, 24 * 60],
+    [0, c]
+  ];
 };
+
 
 const intervalsOverlap = (a, b) => a[0] < b[1] && b[0] < a[1];
 
@@ -79,7 +98,7 @@ const validateMergedRatesNoOverlapAndNoGaps = (mergedRates) => {
   }
 
   // Check coverage (no gaps) for days 1..8
-  const daysSet = [1,2,3,4,5,6,7,8];
+  const daysSet = [1, 2, 3, 4, 5, 6, 7, 8];
   const gapsReport = [];
   for (const day of daysSet) {
     const intervals = [];
@@ -112,13 +131,15 @@ const validateMergedRatesNoOverlapAndNoGaps = (mergedRates) => {
     }
     if (cursor < 24 * 60) gaps.push([cursor, 24 * 60]);
     if (gaps.length) {
-      gapsReport.push({ day, gaps: gaps.map(([s, e]) => {
-        const sh = String(Math.floor(s / 60)).padStart(2, '0');
-        const sm = String(s % 60).padStart(2, '0');
-        const eh = String(Math.floor(e / 60)).padStart(2, '0');
-        const em = String(e % 60).padStart(2, '0');
-        return `${sh}:${sm}-${eh}:${em}`;
-      })});
+      gapsReport.push({
+        day, gaps: gaps.map(([s, e]) => {
+          const sh = String(Math.floor(s / 60)).padStart(2, '0');
+          const sm = String(s % 60).padStart(2, '0');
+          const eh = String(Math.floor(e / 60)).padStart(2, '0');
+          const em = String(e % 60).padStart(2, '0');
+          return `${sh}:${sm}-${eh}:${em}`;
+        })
+      });
     }
   }
   if (gapsReport.length) {
@@ -133,8 +154,8 @@ export const createFlatRates = async (req, res) => {
   const ratesInput = Array.isArray(body.rates)
     ? body.rates
     : body.name && body.amount
-    ? [{ parkingLot: body.parkingLot, name: body.name, amount: body.amount, operatingHour: body.operatingHour }]
-    : [];
+      ? [{ parkingLot: body.parkingLot, name: body.name, amount: body.amount, operatingHour: body.operatingHour }]
+      : [];
 
   if (!ratesInput.length) {
     return res.status(400).json({ error: "No rates provided. Expect 'rates' array or single rate fields." });
@@ -147,20 +168,6 @@ export const createFlatRates = async (req, res) => {
 
     validateObjectId(parkingLot, "parking lot");
     await validateParkingExists(parkingLot);
-
-    // Helpers for time/interval handling
-    const timeToMinutes = (t) => {
-      const [hh, mm] = t.split(":").map(Number);
-      return hh * 60 + mm;
-    };
-
-    const buildIntervals = (open, close) => {
-      const o = timeToMinutes(open);
-      const c = timeToMinutes(close);
-      if (o === c) return [[0, 24 * 60]];
-      if (o < c) return [[o, c]];
-      return [[o, 24 * 60], [0, c]]; // crosses midnight
-    };
 
     const intervalsOverlap = (a, b) => a[0] < b[1] && b[0] < a[1];
 
@@ -219,7 +226,7 @@ export const createFlatRates = async (req, res) => {
 
     // Check coverage (no gaps) for all days 1..8 (include 8 explicitly)
     // If a day (including 8=holiday) has no intervals, it will be treated as a gap.
-    const daysSet = new Set([1,2,3,4,5,6,7,8]);
+    const daysSet = new Set([1, 2, 3, 4, 5, 6, 7, 8]);
     const gapsReport = [];
     for (const day of [...daysSet].sort((a, b) => a - b)) {
       // collect intervals for this day
@@ -258,13 +265,15 @@ export const createFlatRates = async (req, res) => {
       }
       if (cursor < 24 * 60) gaps.push([cursor, 24 * 60]);
       if (gaps.length) {
-        gapsReport.push({ day, gaps: gaps.map(([s, e]) => {
-          const sh = String(Math.floor(s / 60)).padStart(2, '0');
-          const sm = String(s % 60).padStart(2, '0');
-          const eh = String(Math.floor(e / 60)).padStart(2, '0');
-          const em = String(e % 60).padStart(2, '0');
-          return `${sh}:${sm}-${eh}:${em}`;
-        })});
+        gapsReport.push({
+          day, gaps: gaps.map(([s, e]) => {
+            const sh = String(Math.floor(s / 60)).padStart(2, '0');
+            const sm = String(s % 60).padStart(2, '0');
+            const eh = String(Math.floor(e / 60)).padStart(2, '0');
+            const em = String(e % 60).padStart(2, '0');
+            return `${sh}:${sm}-${eh}:${em}`;
+          })
+        });
       }
     }
 
@@ -303,8 +312,8 @@ export const getFlatRate = async (req, res) => {
 };
 
 export const deleteFlatRates = async (req, res) => {
-  
-  const {parkingLot} = req.params;
+
+  const { parkingLot } = req.params;
   try {
     if (!parkingLot) throw new Error('parkingLot is required in body');
     validateObjectId(parkingLot, 'parking lot');
