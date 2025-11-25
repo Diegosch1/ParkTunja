@@ -21,28 +21,28 @@ const App = () => {
           <FlatRatesProvider>
             <VehicleOpsProvider>
 
-          <BrowserRouter>
-            <ToastContainer
-              position="bottom-right"
-              autoClose={4000}
-              className="toast-alert"
-              closeButton={false}
-              pauseOnHover={false}
-            />
-            <Routes>
-              <Route path='/' element={<LandingPage />} />
-              <Route path='/login' element={<LoginPage />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path='/dashboard' element={<DashboardPage />} />
-                <Route path='/reports' element={<ReportsPage />} />
-                <Route element={<AdminProtectedRoute />}>
-                  <Route path='/admin-panel' element={<AdminPage />} />
-                </Route>
-              </Route>
-            </Routes>
-          </BrowserRouter>
+              <BrowserRouter>
+                <ToastContainer
+                  position="bottom-right"
+                  autoClose={4000}
+                  className="toast-alert"
+                  closeButton={false}
+                  pauseOnHover={false}
+                />
+                <Routes>
+                  <Route path='/' element={<LandingPage />} />
+                  <Route path='/login' element={<LoginPage />} />
+                  <Route element={<ProtectedRoute />}>
+                    <Route path='/dashboard' element={<DashboardPage />} />
+                    <Route path='/reports' element={<ReportsPage />} />
+                    {/* <Route element={<AdminProtectedRoute />}> */}
+                    <Route path='/admin-panel' element={<AdminPage />} />
+                    {/* </Route> */}
+                  </Route>
+                </Routes>
+              </BrowserRouter>
 
-          </VehicleOpsProvider>
+            </VehicleOpsProvider>
           </FlatRatesProvider>
         </ParkingProvider>
       </UsersProvider>
