@@ -6,6 +6,7 @@ import parkingRouter from "./routes/parking.routers.js";
 import flatRateRouter from "./routes/flatRates.routers.js";
 import userRouter from "./routes/user.routers.js";
 import vehicleRouter from "./routes/vehicle.routers.js";
+import reportsRouter from "./routes/reports.routers.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/parking", parkingRouter);
+app.use("/reports", reportsRouter);
 app.use("/flatRates", flatRateRouter);
 app.use("/vehicleOps", vehicleRouter);
 
