@@ -36,7 +36,9 @@ body {
 p,
 a,
 li,
-span {
+span,
+td,
+tr {
   font-family: "Roboto", serif;
   font-size: 1rem;
   margin: 0;

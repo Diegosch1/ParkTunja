@@ -11,6 +11,7 @@ import DashboardPage from "./pages/dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from './AdminProtectedRoute';
 import AdminPage from './pages/admin/AdminPage';
+import ReportsPage from './pages/reports/ReportsPage';
 
 const App = () => {
   return (
@@ -33,9 +34,10 @@ const App = () => {
               <Route path='/login' element={<LoginPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path='/dashboard' element={<DashboardPage />} />
-                {/* <Route element={<AdminProtectedRoute />}> */}
+                <Route path='/reports' element={<ReportsPage />} />
+                <Route element={<AdminProtectedRoute />}>
                   <Route path='/admin-panel' element={<AdminPage />} />
-                {/* </Route> */}
+                </Route>
               </Route>
             </Routes>
           </BrowserRouter>
