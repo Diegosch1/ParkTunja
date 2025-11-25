@@ -42,7 +42,7 @@ export const registerVehicleEntry = async (req, res) => {
     parkingSpaces.spots.set(spotKey, {
       isOccupied: true,
       licensePlate,
-      entryTime: new Date(), // Ajuste de -2 horas
+      entryTime: new Date(),
       exitTime: null,
     });
 
@@ -54,7 +54,7 @@ export const registerVehicleEntry = async (req, res) => {
       spotNumber,
       licensePlate,
       type: "entry",
-      timestamp: new Date(), // Ajuste de -2 horas
+      timestamp: new Date(),
     });
 
     // Verificar notificación por alta ocupación
@@ -184,66 +184,126 @@ export const getParkingSpacesInfo = async (req, res) => {
   }
 };
 
+// Convierte HH:mm a minutos del día
+const timeToMinutes = (t) => {
+  const [hh, mm] = t.split(":").map(Number);
+  return hh * 60 + mm;
+};
+
+// Construye intervalos, considerando cruces de medianoche y 24h completas
+const buildIntervals = (open, close) => {
+  const normalize = (t) => (t === "24:00" ? "23:59" : t);
+
+  open = normalize(open);
+  close = normalize(close);
+
+  const o = timeToMinutes(open);
+  const c = timeToMinutes(close);
+
+  // Caso 24 horas reales
+  if (o === c) return [[0, 24 * 60]];
+
+  // Caso normal (sin cruzar medianoche)
+  if (o < c) return [[o, c]];
+
+  // Caso cruza medianoche
+  return [
+    [o, 24 * 60],
+    [0, c],
+  ];
+};
+
 export async function calculateDynamicVehicleFee(parkingLotId, spot) {
+  console.log("=== CALCULATE DYNAMIC VEHICLE FEE ===");
+  console.log("ParkingLotID:", parkingLotId);
+  console.log("Spot recibido:", JSON.stringify(spot, null, 2));
+
   if (!spot?.entryTime) {
     throw new Error("El espacio no tiene hora de entrada registrada.");
   }
 
   const startDateUTC = DateTime.fromJSDate(new Date(spot.entryTime)).toUTC();
-  const endDateUTC = DateTime.fromJSDate(spot.exitTime ? new Date(spot.exitTime) : new Date()).toUTC();
+  const endDateUTC = DateTime.fromJSDate(
+    spot.exitTime ? new Date(spot.exitTime) : new Date()
+  ).toUTC();
+
+  console.log("Start UTC:", startDateUTC.toISO());
+  console.log("End UTC:", endDateUTC.toISO());
 
   if (endDateUTC <= startDateUTC) {
     throw new Error("Las fechas de entrada y salida no son válidas.");
   }
 
-  // Obtener tarifas
   const flatRates = await FlatRate.find({ parkingLot: parkingLotId }).lean();
+  console.log("Tarifas encontradas:", flatRates);
+
   if (!flatRates.length) {
     throw new Error("No se encontraron tarifas configuradas para este parqueadero.");
   }
 
   let totalFee = 0;
-
-  // Iteración hora por hora
   let current = startDateUTC;
+  const end = endDateUTC;
 
-  while (current < endDateUTC) {
-    // Convertir a hora local de Colombia
+  console.log("=== INICIO DEL RECORRIDO POR HORAS ===");
+
+  while (current < end) {
     const local = current.setZone("America/Bogota");
+    const normalizedDay = local.weekday;
+    const currentMinutes = local.hour * 60 + local.minute;
 
-    const normalizedDay = local.weekday;  // Lunes=1 ... Domingo=7
-    const hourStr = local.toFormat("HH:mm"); // "10:22"
+    console.log("\n--- Hora actual iterada ---");
+    console.log("Fecha local:", local.toISO());
+    console.log("Día normalizado:", normalizedDay);
+    console.log("Minutos del día:", currentMinutes);
 
     // Buscar tarifa aplicable
     const applicableRate = flatRates.find((rate) => {
       const oh = rate.operatingHour;
       if (!oh) return false;
 
-      const open = oh.openingTime;
-      const close = oh.closingTime;
-      const crossesMidnight = open > close;
+      const intervals = buildIntervals(oh.openingTime, oh.closingTime);
 
       const isDayIncluded =
         oh.weekDays.includes(normalizedDay) || oh.weekDays.includes(8);
 
-      const isInRange = crossesMidnight
-        ? hourStr >= open || hourStr < close
-        : hourStr >= open && hourStr < close;
+      let isInRange = false;
+      for (const [start, end] of intervals) {
+        if (currentMinutes >= start && currentMinutes < end) {
+          isInRange = true;
+          break;
+        }
+      }
+
+      console.log("Evaluando tarifa:", {
+        rateId: rate._id,
+        amount: rate.amount,
+        intervals,
+        isDayIncluded,
+        isInRange,
+        weekDays: oh.weekDays,
+        opening: oh.openingTime,
+        closing: oh.closingTime,
+      });
 
       return isDayIncluded && isInRange;
     });
 
     if (applicableRate) {
+      console.log(">> Tarifa aplicada:", applicableRate.amount);
       totalFee += applicableRate.amount;
+    } else {
+      console.log(">> NO se encontró tarifa para esta hora.");
     }
 
-    // Avanzar una hora exacta en UTC
     current = current.plus({ hours: 1 });
   }
 
+  console.log("=== TOTAL FEE CALCULADO ===");
+  console.log("Total:", totalFee);
+
   return totalFee;
 }
-
 
 function isWithinOperatingHours(parking) {
   const now = new Date();
