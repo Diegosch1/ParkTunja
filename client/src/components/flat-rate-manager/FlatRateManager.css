@@ -20,7 +20,13 @@
     margin: 0;
 }
 
-.btn-add-rate {
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-add-rate,
+.btn-edit-rates {
     padding: 0.6rem 1.2rem !important;
     font-size: 0.9rem;
     background-color: var(--color-decoration);
@@ -29,8 +35,22 @@
     transition: background-color 0.3s ease-in-out;
 }
 
-.btn-add-rate:hover {
+.btn-add-rate:hover,
+.btn-edit-rates:hover {
     background-color: var(--color-decoration-hover);
+}
+
+.btn-delete-all {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.9rem;
+    background-color: var(--color-error);
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.btn-delete-all:hover {
+    background-color: #c0392b;
 }
 
 .loading-rates {

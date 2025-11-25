@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './VehicleEntryModal.css';
 import ButtonComponent from '../button/ButtonComponent';
 import InputComponent from '../input/InputComponent';
 import { useVehicleOps } from '../../context/VehicleOpsContext';
+import { useFlatRates } from '../../context/FlatRatesContext';
 import { toast } from 'react-toastify';
 
-const VehicleEntryModal = ({ parkingId, onClose, onSuccess }) => {
+const VehicleEntryModal = ({ parkingId, parking, onClose, onSuccess }) => {
   const { vehicleEntry, parkingSpacesInfo } = useVehicleOps();
+  const { flatRates } = useFlatRates();
   const [formData, setFormData] = useState({
     spotNumber: '',
     licensePlate: ''
@@ -14,6 +16,69 @@ const VehicleEntryModal = ({ parkingId, onClose, onSuccess }) => {
   const [availableSpots, setAvailableSpots] = useState([]);
   const [occupiedPlates, setOccupiedPlates] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasRates, setHasRates] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
+  const hasShownToast = useRef(false);
+
+  // Función para verificar si el parqueadero está abierto
+  const checkIfParkingIsOpen = () => {
+    if (!parking?.operatingHours || parking.operatingHours.length === 0) {
+      return true; // Si no hay horarios configurados, asumimos que está abierto
+    }
+
+    const now = new Date();
+    const currentDay = now.getDay() === 0 ? 7 : now.getDay(); // 1=Lun, 7=Dom
+    const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    // Verificar si algún horario cubre el día y hora actual
+    for (const schedule of parking.operatingHours) {
+      if (schedule.weekDays.includes(currentDay) || schedule.weekDays.includes(8)) { // 8 = Festivo
+        const { openingTime, closingTime } = schedule;
+        
+        // Caso especial: 00:00 - 00:00 significa 24 horas
+        if (openingTime === '00:00' && closingTime === '00:00') {
+          return true;
+        }
+
+        // Horario que cruza medianoche
+        if (openingTime > closingTime) {
+          if (currentTime >= openingTime || currentTime < closingTime) {
+            return true;
+          }
+        } else {
+          // Horario normal
+          if (currentTime >= openingTime && currentTime < closingTime) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  };
+
+  useEffect(() => {
+    // Verificar si hay tarifas configuradas para este parqueadero
+    const parkingRates = flatRates.filter(
+      rate => rate.parkingLot === parkingId
+    );
+    setHasRates(parkingRates.length > 0);
+
+    // Verificar si el parqueadero está abierto
+    const isParkingOpen = checkIfParkingIsOpen();
+    setIsOpen(isParkingOpen);
+
+    // Mostrar toast solo la primera vez
+    if (!hasShownToast.current) {
+      if (parkingRates.length === 0) {
+        toast.error('No hay tarifas configuradas. Configure las tarifas antes de registrar entradas.');
+        hasShownToast.current = true;
+      } else if (!isParkingOpen) {
+        toast.error('El parqueadero está cerrado en este momento. No se pueden registrar entradas.');
+        hasShownToast.current = true;
+      }
+    }
+  }, [flatRates, parkingId, parking]);
 
   useEffect(() => {
     if (parkingSpacesInfo?.spots) {
@@ -45,6 +110,18 @@ const VehicleEntryModal = ({ parkingId, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     
     e.preventDefault();
+
+    // Validar que haya tarifas configuradas
+    if (!hasRates) {
+      toast.error('No se pueden registrar entradas sin tarifas configuradas');
+      return;
+    }
+
+    // Validar que el parqueadero esté abierto
+    if (!isOpen) {
+      toast.error('El parqueadero está cerrado. No se pueden registrar entradas fuera del horario de operación.');
+      return;
+    }
 
     // Validaciones
     if (!formData.spotNumber) {
