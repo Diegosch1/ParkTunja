@@ -9,7 +9,7 @@ import {
 
 const router = Router();
 
-// CRUD for flat rates
+// CRUD for flat ratesm
 router.get("/getFlatRates", getFlatRates);
 router.get("/getFlatRate/:id", getFlatRate);
 router.post("/createFlatRates", createFlatRates);
