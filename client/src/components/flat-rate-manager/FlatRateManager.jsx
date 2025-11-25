@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFlatRates } from '../../context/FlatRatesContext';
 import ButtonComponent from '../button/ButtonComponent';
-import FlatRateModal from '../flat-rate-modal/FlatRateModal';
+import FlatRatesEditor from '../flat-rates-editor/FlatRatesEditor';
 import ConfirmationDialogComponent from '../confirmation-dialog/ConfirmationDialogComponent';
 import { toast } from 'react-toastify';
 import './FlatRateManager.css';
@@ -10,13 +10,13 @@ const FlatRateManager = ({ parkingLot }) => {
     const {
         flatRates,
         getAllFlatRates,
-        removeFlatRate,
+        addFlatRates,
+        editFlatRates,
+        removeFlatRates,
         isLoading
     } = useFlatRates();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [flatRateToEdit, setFlatRateToEdit] = useState(null);
-    const [flatRateToDelete, setFlatRateToDelete] = useState(null);
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     useEffect(() => {
@@ -27,51 +27,60 @@ const FlatRateManager = ({ parkingLot }) => {
         flatRate => flatRate.parkingLot === parkingLot._id || flatRate.parkingLot === parkingLot.id
     );
 
-    const handleCreateFlatRate = () => {
-        setFlatRateToEdit(null);
-        setIsModalOpen(true);
+    const handleCreateRates = () => {
+        setIsEditorOpen(true);
     };
 
-    const handleEditFlatRate = (flatRate) => {
-        setFlatRateToEdit(flatRate);
-        setIsModalOpen(true);
+    const handleEditRates = () => {
+        setIsEditorOpen(true);
     };
 
-    const handleDeleteClick = (flatRate) => {
-        setFlatRateToDelete(flatRate);
+    const handleDeleteClick = () => {
         setIsDeleteDialogOpen(true);
     };
 
     const handleConfirmDelete = async () => {
-        if (flatRateToDelete) {
-            try {
-                await removeFlatRate(flatRateToDelete._id);
-                toast.success('Tarifa eliminada exitosamente');
-                setIsDeleteDialogOpen(false);
-                setFlatRateToDelete(null);
-            } catch (error) {
-                console.error('Error al eliminar tarifa:', error);
-                toast.error('Error al eliminar la tarifa');
-            }
+        try {
+            await removeFlatRates(parkingLot._id || parkingLot.id);
+            toast.success('Todas las tarifas fueron eliminadas exitosamente');
+            setIsDeleteDialogOpen(false);
+        } catch (error) {
+            console.error('Error al eliminar tarifas:', error);
+            toast.error('Error al eliminar las tarifas');
         }
     };
 
     const handleCancelDelete = () => {
         setIsDeleteDialogOpen(false);
-        setFlatRateToDelete(null);
     };
 
-    const handleModalClose = async () => {
-        setIsModalOpen(false);
-        setFlatRateToEdit(null);
-        // Refrescar la lista de tarifas después de crear/editar
-        await getAllFlatRates();
+    const handleSaveRates = async (ratesData) => {
+        try {
+            if (parkingFlatRates.length > 0) {
+                // Editar tarifas existentes
+                await editFlatRates({
+                    parkingLot: parkingLot._id || parkingLot.id,
+                    rates: ratesData
+                });
+                toast.success('Tarifas actualizadas exitosamente');
+            } else {
+                // Crear nuevas tarifas
+                await addFlatRates({
+                    rates: ratesData
+                });
+                toast.success('Tarifas creadas exitosamente');
+            }
+            setIsEditorOpen(false);
+        } catch (error) {
+            console.error('Error al guardar tarifas:', error);
+            const errorMessage = error.response?.data?.error || 'Error al guardar las tarifas';
+            toast.error(errorMessage);
+        }
     };
 
-    const handleCloseModalFromX = async () => {
-        setIsModalOpen(false);
-        setFlatRateToEdit(null);
-    }
+    const handleCloseEditor = () => {
+        setIsEditorOpen(false);
+    };
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('es-CO', {
@@ -103,11 +112,26 @@ const FlatRateManager = ({ parkingLot }) => {
         <div className="flat-rate-manager">
             <div className="flat-rate-header">
                 <h3>Tarifas del Parqueadero</h3>
-                <ButtonComponent
-                    text="+ Agregar Tarifa"
-                    onClick={handleCreateFlatRate}
-                    className="btn-add-rate"
-                />
+                {parkingFlatRates.length === 0 ? (
+                    <ButtonComponent
+                        text="+ Crear Tarifas"
+                        onClick={handleCreateRates}
+                        className="btn-add-rate"
+                    />
+                ) : (
+                    <div className="header-actions">
+                        <ButtonComponent
+                            text="Editar"
+                            onClick={handleEditRates}
+                            className="btn-edit-rates"
+                        />
+                        <ButtonComponent
+                            text="Eliminar Todo"
+                            onClick={handleDeleteClick}
+                            className="btn-delete-all"
+                        />
+                    </div>
+                )}
             </div>
 
             {isLoading ? (
@@ -115,7 +139,7 @@ const FlatRateManager = ({ parkingLot }) => {
             ) : parkingFlatRates.length === 0 ? (
                 <div className="no-rates">
                     <p>No hay tarifas configuradas para este parqueadero</p>
-                    <small>Agrega una tarifa para empezar</small>
+                    <small>Las tarifas son necesarias para realizar operaciones de entrada y salida</small>
                 </div>
             ) : (
                 <div className="flat-rates-list">
@@ -140,36 +164,29 @@ const FlatRateManager = ({ parkingLot }) => {
                                         </div>
                                     </div>
                                 )}
-                                
-                                <small className="rate-date">
-                                    Creada: {new Date(flatRate.createdAt).toLocaleDateString('es-CO')}
-                                </small>
-                            </div>
-                            <div className="rate-actions">
-                                <ButtonComponent className="edit-btn" onClick={() => handleEditFlatRate(flatRate)} text="Editar tarifa" />
-                                <ButtonComponent className="delete-btn" onClick={() => handleDeleteClick(flatRate)} text="Eliminar tarifa" />
                             </div>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Modal para crear/editar tarifa */}
-            <FlatRateModal
-                isOpen={isModalOpen}
-                onClose={handleModalClose}
-                onCloseX={handleCloseModalFromX}
+            {/* Modal editor de tarifas */}
+            <FlatRatesEditor
+                isOpen={isEditorOpen}
+                onClose={handleCloseEditor}
                 parkingLotId={parkingLot._id || parkingLot.id}
-                flatRateToEdit={flatRateToEdit}
+                existingRates={parkingFlatRates}
+                onSave={handleSaveRates}
+                isLoading={isLoading}
             />
 
-            {/* Diálogo de confirmación para eliminar */}
+            {/* Diálogo de confirmación para eliminar todas las tarifas */}
             <ConfirmationDialogComponent
                 isOpen={isDeleteDialogOpen}
                 onConfirm={handleConfirmDelete}
                 onCancel={handleCancelDelete}
-                title="Eliminar Tarifa"
-                message={`¿Estás seguro de que deseas eliminar la tarifa "${flatRateToDelete?.name}"?`}
+                title="Eliminar Todas las Tarifas"
+                message="¿Estás seguro de que deseas eliminar todas las tarifas de este parqueadero? Esta acción no se puede deshacer."
             />
         </div>
     );

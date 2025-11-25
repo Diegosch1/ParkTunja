@@ -2,9 +2,9 @@ import { createContext, useContext, useState } from "react";
 import { 
     getFlatRates, 
     getFlatRate, 
-    createFlatRate, 
-    updateFlatRate, 
-    deleteFlatRate 
+    createFlatRates, 
+    updateFlatRates, 
+    deleteFlatRates 
 } from "../api/flatRates";
 
 const FlatRatesContext = createContext();
@@ -61,17 +61,18 @@ export const FlatRatesProvider = ({ children }) => {
         }
     };
 
-    const addFlatRate = async (flatRateData) => {
+    const addFlatRates = async (ratesData) => {
         setIsLoading(true);
         try {
-            const res = await createFlatRate(flatRateData);
-            setFlatRates(prev => [...prev, res.data]);
+            const res = await createFlatRates(ratesData);
+            // Refrescar todas las tarifas después de crear
+            await getAllFlatRates();
             return res.data;
         } catch (error) {
             if (Array.isArray(error.response?.data)) {
                 setErrors(error.response.data);
             } else {
-                setErrors([error.response?.data?.error || "Error al crear la tarifa"]);
+                setErrors([error.response?.data?.error || "Error al crear las tarifas"]);
             }
             throw error;
         } finally {
@@ -79,24 +80,18 @@ export const FlatRatesProvider = ({ children }) => {
         }
     }
 
-    const editFlatRate = async (id, flatRateData) => {
+    const editFlatRates = async (ratesData) => {
         setIsLoading(true);
         try {
-            const res = await updateFlatRate(id, flatRateData);
-            setFlatRates(prev => 
-                prev.map(flatRate => 
-                    flatRate._id === id ? res.data : flatRate
-                )
-            );
-            if (selectedFlatRate && selectedFlatRate._id === id) {
-                setSelectedFlatRate(res.data);
-            }
+            const res = await updateFlatRates(ratesData);
+            // Refrescar todas las tarifas después de actualizar
+            await getAllFlatRates();
             return res.data;
         } catch (error) {
             if (Array.isArray(error.response?.data)) {
                 setErrors(error.response.data);
             } else {
-                setErrors([error.response?.data?.error || "Error al actualizar la tarifa"]);
+                setErrors([error.response?.data?.error || "Error al actualizar las tarifas"]);
             }
             throw error;
         } finally {
@@ -104,19 +99,16 @@ export const FlatRatesProvider = ({ children }) => {
         }
     }
 
-    const removeFlatRate = async (id) => {
+    const removeFlatRates = async (parkingLotId) => {
         setIsLoading(true);
         try {
-            await deleteFlatRate(id);
-            setFlatRates(prev => prev.filter(flatRate => flatRate._id !== id));
-            if (selectedFlatRate && selectedFlatRate._id === id) {
-                setSelectedFlatRate(null);
-            }
+            await deleteFlatRates(parkingLotId);
+            setFlatRates(prev => prev.filter(flatRate => flatRate.parkingLot !== parkingLotId));
         } catch (error) {
             if (Array.isArray(error.response?.data)) {
                 setErrors(error.response.data);
             } else {
-                setErrors([error.response?.data?.error || "Error al eliminar la tarifa"]);
+                setErrors([error.response?.data?.error || "Error al eliminar las tarifas"]);
             }
             throw error;
         } finally {
@@ -144,9 +136,9 @@ export const FlatRatesProvider = ({ children }) => {
             errors,
             getAllFlatRates,
             getFlatRateInfo,
-            addFlatRate,
-            editFlatRate,
-            removeFlatRate,
+            addFlatRates,
+            editFlatRates,
+            removeFlatRates,
             getFlatRatesByParkingLot,
             clearSelectedFlatRate,
             clearErrors,

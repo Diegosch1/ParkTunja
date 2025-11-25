@@ -3,6 +3,7 @@ import SidebarComponent from '../../components/sidebar/SidebarComponent'
 import ResponsiveNavComponent from '../../components/responsive-nav/ResponsiveNavComponent'
 import { useParking } from '../../context/ParkingContext'
 import { useVehicleOps } from '../../context/VehicleOpsContext'
+import { useFlatRates } from '../../context/FlatRatesContext'
 import FlatRateManager from '../../components/flat-rate-manager/FlatRateManager'
 import VehicleEntryModal from '../../components/vehicle-entry/VehicleEntryModal'
 import VehicleExitModal from '../../components/vehicle-exit/VehicleExitModal'
@@ -16,6 +17,7 @@ import ParkingModal from '../../components/modal/ParkingModal'
 const DashboardPage = () => {
   const { parkings, getAllParkings, isLoading } = useParking();
   const { parkingSpacesInfo, getParkingSpaces, highOccupancyNotification, dismissNotification } = useVehicleOps();
+  const { flatRates } = useFlatRates();
   const [selectedParking, setSelectedParking] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,6 +26,14 @@ const DashboardPage = () => {
   const [currentParkingIndex, setCurrentParkingIndex] = useState(0);
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
+
+  // Verificar si hay tarifas configuradas para el parqueadero seleccionado
+  const hasRatesConfigured = useMemo(() => {
+    if (!selectedParking) return false;
+    return flatRates.some(
+      rate => rate.parkingLot === selectedParking._id || rate.parkingLot === selectedParking.id
+    );
+  }, [selectedParking, flatRates]);
 
   useEffect(() => {
     document.title = 'ParkTunja - Dashboard';
@@ -291,10 +301,20 @@ const DashboardPage = () => {
               </div>
 
               <div className="operations-buttons">
-                <button className="btn-operation btn-entry" onClick={() => setShowEntryModal(true)} disabled={!selectedParking}>
+                <button 
+                  className="btn-operation btn-entry" 
+                  onClick={() => setShowEntryModal(true)} 
+                  disabled={!selectedParking || !hasRatesConfigured}
+                  title={!hasRatesConfigured ? 'Configure tarifas para habilitar esta opción' : ''}
+                >
                   Entrada
                 </button>
-                <button className="btn-operation btn-exit" onClick={() => setShowExitModal(true)} disabled={!selectedParking}>
+                <button 
+                  className="btn-operation btn-exit" 
+                  onClick={() => setShowExitModal(true)} 
+                  disabled={!selectedParking || !hasRatesConfigured}
+                  title={!hasRatesConfigured ? 'Configure tarifas para habilitar esta opción' : ''}
+                >
                   Salida
                 </button>
               </div>
@@ -364,6 +384,7 @@ const DashboardPage = () => {
         {showEntryModal && selectedParking && (
           <VehicleEntryModal
             parkingId={selectedParking.id}
+            parking={selectedParking}
             onClose={() => setShowEntryModal(false)}
             onSuccess={handleVehicleOperationSuccess}
           />
@@ -372,6 +393,7 @@ const DashboardPage = () => {
         {showExitModal && selectedParking && (
           <VehicleExitModal
             parkingId={selectedParking.id}
+            parking={selectedParking}
             onClose={() => setShowExitModal(false)}
             onSuccess={handleVehicleOperationSuccess}
           />
